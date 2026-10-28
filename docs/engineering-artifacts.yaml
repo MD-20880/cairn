@@ -1,29 +1,37 @@
-# cairn 文档资产登记表
+# cairn 文档资产登记表（格式见 embedded-skills emb-repo artifact-conventions）
 #
-# 登记表是受控资产的权威入口；登记不等于批准。
-# status 取值：draft / active / superseded / archived
-# sha256：文件原始字节的 SHA-256。修改受控文件后，同步更新 revision 与 sha256。
-schema: 1
+# 登记表记录文档在本项目中的属性：路径、状态、适用范围、完整性校验值。
+# 文档自身的属性（ID、类型、修订、关系）写在文件 meta 中，id 和 type 两边须一致。
+# 登记不等于批准。status 取值：draft / active / superseded / archived
+# sha256：文本文件先把 CRLF、CR 统一为 LF 再计算。修改受控文件后同步更新。
+schema_version: 1
 coverage: full
+integrity: sha256
+types:
+  requirement:
+    purpose: "cairn 的需求"
+  design:
+    purpose: "cairn 的设计方案"
+  glossary:
+    purpose: "cairn 的术语定义"
 artifacts:
   - id: CRN-REQ-001
-    type: Requirement
+    type: requirement
     path: docs/requirements.md
     status: draft
-    scope: cairn
-    revision: 1
-    sha256: 0647778f39f0d35e669f71bddac97cfa6369e26c332896f59dde9fccf4f51952
+    scope: ["project"]
+    sha256: bd7944a9b139ff435ba422a9fffa8f1c9bd5ee599dbb3e996d060b6b5fd1df70
+
   - id: CRN-DSN-001
-    type: Design
+    type: design
     path: docs/design/first-slice.md
     status: draft
-    scope: cairn
-    revision: 2
-    sha256: 044290ebb38762bc4a3f34c4bb9c85e9e36c6c3dbbb2c4933756762f78ea3bda
+    scope: ["project"]
+    sha256: 2ffb77e989721a9e1c8501ce7ed7776b9cce5a8fa6551aa8a37e689892d9f1f6
+
   - id: CRN-GLO-001
-    type: Glossary
+    type: glossary
     path: docs/glossary.md
     status: draft
-    scope: cairn
-    revision: 2
-    sha256: 87c6daf8c4d387a3a6736c5a822aa440c0cf7c116787571e82ce097ee933d0e2
+    scope: ["project"]
+    sha256: 815d1b7712b54a401d4e44772223f56e666469273a7951b68146127c36b50731
