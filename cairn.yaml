@@ -1,0 +1,7 @@
+# cairn 自身仓库的映射配置
+registry: docs/engineering-artifacts.yaml
+id_pattern: '\bCRN-[A-Z]+-\d{3}\b'
+field_relations:
+  需求依据: satisfies
+  决策依据: governed_by
+  依赖: depends_on
