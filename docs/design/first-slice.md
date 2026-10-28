@@ -123,9 +123,9 @@ relations:
 登记表的 `status` 表示文档在项目中的接受状态：`draft`（未接受）、`active`（已接受）、`archived`（退出使用）。有效状态在此基础上推导：
 
 1. 存在一个 `active` 文档以 `supersedes` 指向本文档时，本文档的有效状态为 `superseded`。
-2. 否则取登记表的 `status`。
+2. 否则取登记表的 `status`；登记表写的是 `superseded` 时按 `active` 处理，因为它曾被接受，而取代它的文档还没有被接受。
 
-登记表直接写了 `superseded` 时，与推导结果比较，不一致报 `W_SUPERSEDES`。
+推导只看关系和后继的接受状态，不读登记表中的 `superseded`。登记表状态与推导结果不一致时报 `W_SUPERSEDES`，包括两种情况：登记为 `superseded` 但没有被接受的后继（含后继仍是 draft，或根本没有后继）；登记为 `draft` 或 `active` 但已有被接受的后继。
 
 ### Edge
 
@@ -197,7 +197,7 @@ Markdown 链接相对所在文件解析：去掉锚点，统一使用 `/` 分隔
 | E_REL_TYPE | 关系类型不在元模型中 |
 | E_TYPE_CONSTRAINT | 关系两端的文档类型不符合元模型 |
 | W_NO_META | 受控 Markdown 文件没有 meta |
-| W_SUPERSEDES | 登记表状态与推导出的有效状态不一致 |
+| W_SUPERSEDES | 登记表状态与推导出的取代状态不一致：登记为 superseded 但没有被接受的后继，或已有被接受的后继但未登记为 superseded |
 | W_STALE_BASIS | active 节点有非 mention 边指向有效状态为 superseded 或 archived 的节点 |
 | W_CYCLE | depends_on 或 supersedes 出现环 |
 | I_UNRESOLVED_LINK | 链接指向未登记的路径 |
