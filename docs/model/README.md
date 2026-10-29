@@ -11,6 +11,7 @@
 
 | 字段 | 含义 |
 |---|---|
+| `title` | 给人看的简短名称 |
 | `name` | 类型名，小写，在登记表 `type` 字段中使用 |
 | `meta` | 是否为元类型（registry、doctype、reltype） |
 | `purpose` | 一句话说明用途，对应登记表 `types` 中的 `purpose` |
@@ -19,6 +20,7 @@
 
 | 字段 | 含义 |
 |---|---|
+| `title` | 给人看的简短名称 |
 | `name` | 关系名，在文件 meta 的 `relations` 和正文 `@rel()` 标记中使用 |
 | `shape` | `arrow`（有向）或 `line`（无向） |
 | `from`、`to` | 允许的起点、终点类型列表。`"*"` 表示任意类型，`"!x"` 表示排除类型 x，`same` 表示与起点同类型 |

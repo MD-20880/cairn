@@ -1,6 +1,7 @@
 ---
 id: CRN-TYP-001
 type: doctype
+title: 'requirement：需求'
 revision: 1
 name: requirement
 meta: false

@@ -1,6 +1,7 @@
 ---
 id: CRN-TYP-009
 type: doctype
+title: 'registry：登记表'
 revision: 1
 name: registry
 meta: true

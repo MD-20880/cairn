@@ -1,6 +1,7 @@
 ---
 id: CRN-TYP-004
 type: doctype
+title: 'specification：规范'
 revision: 1
 name: specification
 meta: false

@@ -1,6 +1,7 @@
 ---
 id: CRN-TYP-010
 type: doctype
+title: 'doctype：类型描述'
 revision: 1
 name: doctype
 meta: true

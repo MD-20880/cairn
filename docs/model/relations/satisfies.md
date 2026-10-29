@@ -1,6 +1,7 @@
 ---
 id: CRN-REL-005
 type: reltype
+title: 'satisfies：满足'
 revision: 1
 name: satisfies
 shape: arrow

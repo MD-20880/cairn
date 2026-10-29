@@ -1,6 +1,7 @@
 ---
 id: CRN-DSN-001
 type: design
+title: 'cairn 第一阶段设计：检索'
 revision: 3
 relations:
   satisfies: [CRN-REQ-001]
@@ -111,6 +112,7 @@ types:
     purpose: "设计方案"
 artifacts:                                        # 每个条目是一条 registers 关系
   - id: XX-DSN-001
+    title: 'A2 链路设计'                          # 冗余，便于阅读；须与文件 meta 一致
     type: design
     path: docs/design/link.md
     status: draft
@@ -126,6 +128,7 @@ artifacts:                                        # 每个条目是一条 regist
 ---
 id: XX-DSN-001
 type: design
+title: 'A2 链路设计'
 revision: 2
 relations:
   satisfies: [XX-REQ-001]
@@ -139,6 +142,7 @@ project:            # 受管块：由工具写入，手工不要修改
 ---
 ```
 
+- `title` 是给人看的简短名称，让只写了 ID 的地方也能认出是哪份文档。
 - `relations` 以关系类型为键。值是 ID 列表；需要携带内容时，列表项写成 `{to, note}`。
 - `project` 是受管块，保存项目属性的副本，让文档离开仓库时仍能看出状态。它由 `sync` 按登记表写入，内容以登记表为准。本阶段忽略它，状态一律从登记表读取。
 - 文件 meta 中不出现由作者手写的状态字段。
@@ -159,12 +163,12 @@ project:            # 受管块：由工具写入，手工不要修改
 
 字段：`id`、`type`、`path`、`status`（登记表）、`status_effective`（派生）、`revision`、`scope`、`sha256`、`title`。
 
-- `title` 取文件中的第一个 H1。
+- `title` 取文件 meta 中的 `title`；没有时取文件中的第一个 H1。
 - `scope` 统一为字符串列表；登记表写成单个字符串时按一项处理。
 
 ### 登记条目
 
-登记表的每个条目是一条 `registers` 边，除 `id`、`type` 外携带：`path`、`status`、`scope`、`sha256`，以及可选的 `approval`。
+登记表的每个条目是一条 `registers` 边，除 `id`、`type` 和可选的 `title` 外携带：`path`、`status`、`scope`、`sha256`，以及可选的 `approval`。
 
 `approval` 记录批准依据：
 
@@ -329,6 +333,7 @@ Markdown 链接相对所在文件解析：去掉锚点，统一使用 `/` 分隔
 | W_NO_APPROVAL | 登记为 active 但没有 `approval` |
 | W_APPROVAL_STALE | 当前校验值与 `approval.sha256` 不同，文档在批准后被修改 |
 | W_MANAGED_DRIFT | 文件受管块与登记表的项目属性不一致 |
+| W_TITLE_MISMATCH | 登记表条目的 `title` 与文件 meta 不一致 |
 | I_UNRESOLVED_LINK | 链接指向未登记的路径 |
 
 以下两个是写命令，也是 cairn 仅有的写操作。

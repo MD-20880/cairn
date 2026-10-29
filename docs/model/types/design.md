@@ -1,6 +1,7 @@
 ---
 id: CRN-TYP-003
 type: doctype
+title: 'design：设计方案'
 revision: 1
 name: design
 meta: false

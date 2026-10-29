@@ -1,6 +1,7 @@
 ---
 id: CRN-TYP-007
 type: doctype
+title: 'reference：外部依据'
 revision: 1
 name: reference
 meta: false

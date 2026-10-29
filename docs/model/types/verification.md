@@ -1,6 +1,7 @@
 ---
 id: CRN-TYP-005
 type: doctype
+title: 'verification：验证'
 revision: 1
 name: verification
 meta: false

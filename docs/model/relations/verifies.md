@@ -1,6 +1,7 @@
 ---
 id: CRN-REL-008
 type: reltype
+title: 'verifies：验证'
 revision: 1
 name: verifies
 shape: arrow

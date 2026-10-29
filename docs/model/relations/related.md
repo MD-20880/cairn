@@ -1,6 +1,7 @@
 ---
 id: CRN-REL-009
 type: reltype
+title: 'related：相关'
 revision: 1
 name: related
 shape: line

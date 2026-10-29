@@ -1,6 +1,7 @@
 ---
 id: CRN-REL-001
 type: reltype
+title: 'registers：登记'
 revision: 1
 name: registers
 shape: arrow

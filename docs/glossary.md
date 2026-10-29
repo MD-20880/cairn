@@ -1,6 +1,7 @@
 ---
 id: CRN-GLO-001
 type: glossary
+title: 'cairn 词汇表'
 revision: 3
 ---
 
@@ -29,7 +30,7 @@ revision: 3
 ：登记关系上的批准记录，包括批准记录的引用和批准时内容的完整性校验值。
 
 **文件 meta**（meta）
-：受控 Markdown 文件开头的 YAML frontmatter，记录文档自身的属性：ID、类型、修订和对外关系。作者不在其中声明接受状态。
+：受控 Markdown 文件开头的 YAML frontmatter，记录文档自身的属性：ID、类型、标题、修订和对外关系。作者不在其中声明接受状态。
 
 **受管块**（`project`）
 ：文件 meta 中由工具写入的项目属性副本，以登记表为准，不计入完整性校验值。

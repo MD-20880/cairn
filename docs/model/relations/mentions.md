@@ -1,6 +1,7 @@
 ---
 id: CRN-REL-010
 type: reltype
+title: 'mentions：提及'
 revision: 1
 name: mentions
 shape: arrow

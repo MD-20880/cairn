@@ -1,6 +1,7 @@
 ---
 id: CRN-REL-006
 type: reltype
+title: 'governed_by：受约束于'
 revision: 1
 name: governed_by
 shape: arrow

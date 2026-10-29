@@ -1,6 +1,7 @@
 ---
 id: CRN-TYP-008
 type: doctype
+title: 'glossary：术语表'
 revision: 1
 name: glossary
 meta: false

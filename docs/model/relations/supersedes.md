@@ -1,6 +1,7 @@
 ---
 id: CRN-REL-003
 type: reltype
+title: 'supersedes：取代'
 revision: 1
 name: supersedes
 shape: arrow

@@ -1,6 +1,7 @@
 ---
 id: CRN-REL-004
 type: reltype
+title: 'amends：修订补充'
 revision: 1
 name: amends
 shape: arrow

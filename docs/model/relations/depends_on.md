@@ -1,6 +1,7 @@
 ---
 id: CRN-REL-007
 type: reltype
+title: 'depends_on：依赖'
 revision: 1
 name: depends_on
 shape: arrow

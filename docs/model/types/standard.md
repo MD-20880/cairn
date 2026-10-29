@@ -1,6 +1,7 @@
 ---
 id: CRN-TYP-006
 type: doctype
+title: 'standard：工程规则'
 revision: 1
 name: standard
 meta: false

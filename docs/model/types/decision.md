@@ -1,6 +1,7 @@
 ---
 id: CRN-TYP-002
 type: doctype
+title: 'decision：决策记录（ADR）'
 revision: 1
 name: decision
 meta: false

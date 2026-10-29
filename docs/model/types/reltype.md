@@ -1,6 +1,7 @@
 ---
 id: CRN-TYP-011
 type: doctype
+title: 'reltype：关系描述'
 revision: 1
 name: reltype
 meta: true
