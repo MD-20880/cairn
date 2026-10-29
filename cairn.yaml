@@ -31,7 +31,14 @@ artifacts:
     path: docs/design/retrieval.md
     status: draft
     scope: ["project"]
-    sha256: 1e6061cef014b4b57e11138b4de2553392ea948548d692007f1b51b4d377c136
+    sha256: 4718f8fa71e0efe1e232d8e0889d52379f4ee8891ea532694cc706eadb7fc8ff
+
+  - id: CRN-DESIGN-METAMODEL
+    type: design
+    path: docs/design/metamodel.md
+    status: draft
+    scope: ["project"]
+    sha256: 4b9d24700d61505fc6dade493e8535b62af631699deaf1436869a8123042a823
 
   - id: CRN-GLOSSARY
     type: glossary

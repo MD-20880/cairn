@@ -2,7 +2,7 @@
 id: CRN-DESIGN-RETRIEVAL
 type: design
 title: 'cairn 第一阶段设计：检索'
-revision: 4
+revision: 5
 relations:
   satisfies: [CRN-REQUIREMENTS]
 ---
@@ -68,7 +68,7 @@ relations:
 
 ## 元模型
 
-元模型的唯一来源是 [`docs/model/`](../model/README.md)：`types/` 中每个文件定义一种文档类型，`relations/` 中每个文件定义一种关系类型。文件的 frontmatter 是机器可读的定义，正文是语义说明。cairn 发布时把这两个目录打包进去，运行时从中读取，不另行维护副本。项目可以在自己的仓库中追加类型或关系，不能改写已有定义的语义。
+元模型的分层、字段和推导规则见 [CRN-DESIGN-METAMODEL](metamodel.md)，本节只列出本阶段用到的部分。元模型的唯一来源是 [`docs/model/`](../model/README.md)：`types/` 中每个文件定义一种文档类型，`relations/` 中每个文件定义一种关系类型。文件的 frontmatter 是机器可读的定义，正文是语义说明。cairn 发布时把这两个目录打包进去，运行时从中读取，不另行维护副本。项目可以在自己的仓库中追加类型或关系，不能改写已有定义的语义。
 
 - 文档类型：requirement、decision、design、specification、verification、standard、reference、glossary；元类型 registry、doctype、reltype。类型名一律小写，与 embedded-skills 的 artifact-conventions 一致。登记表 `types` 中声明的类型必须在元模型中存在。
 - 关系类型：registers、includes、supersedes、amends、satisfies、governed_by、depends_on、verifies、related、mentions。
