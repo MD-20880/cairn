@@ -1,4 +1,38 @@
-# cairn 自身仓库的映射配置
-# 关系全部在文件 meta 中声明，不需要兼容层。
-registry: docs/engineering-artifacts.yaml
+# cairn 自身的根登记表（项目根标记）
+#
+# 记录文档在本项目中的属性：路径、状态、适用范围、完整性校验值。
+# 文档自身的属性（ID、类型、修订、关系）写在文件 meta 中，id 和 type 两边须一致。
+# 登记不等于批准。status 取值：draft / active / superseded / archived
+# sha256：文本文件先去掉受管块，再把 CRLF、CR 统一为 LF 后计算。修改受控文件后同步更新。
+schema_version: 1
+coverage: full
+integrity: sha256
 id_pattern: '\bCRN-[A-Z]+-\d{3}\b'
+types:
+  requirement:
+    purpose: "cairn 的需求"
+  design:
+    purpose: "cairn 的设计方案"
+  glossary:
+    purpose: "cairn 的术语定义"
+artifacts:
+  - id: CRN-REQ-001
+    type: requirement
+    path: docs/requirements.md
+    status: draft
+    scope: ["project"]
+    sha256: d3d531a862a9cfb7e97dd7fab073a281917e3bb5542cc8bbf15781e9d8817896
+
+  - id: CRN-DSN-001
+    type: design
+    path: docs/design/first-slice.md
+    status: draft
+    scope: ["project"]
+    sha256: f4ffd82ef0e1e846b4e8fe605a148109e92891da7479aac435921e2097b6947b
+
+  - id: CRN-GLO-001
+    type: glossary
+    path: docs/glossary.md
+    status: draft
+    scope: ["project"]
+    sha256: 13ed83df66cc61008f13898d6c9be108f6fff4f64173fdfea05697526cc2d999

@@ -39,21 +39,28 @@ relations:
 
 推导从一个根登记表出发：
 
-1. 沿 `registers` 关系确定哪些文档属于本项目，以及它们的项目属性。图的节点集合由此确定。
+1. 沿 `includes` 展开被包含的登记表，再沿各登记表的 `registers` 确定哪些文档属于本项目，以及它们的项目属性。图的节点集合由此确定。
 2. 文档之间的关系从各文件的 meta 和正文标记中读取。
 3. 有效状态、悬空引用、未登记链接由两者合并推导。
 
 换一个根登记表，就是换一个项目视角：节点范围和项目状态可以不同，文档之间的关系不变。
 
-根由项目根标记 `cairn.yaml` 确定。它是映射配置，同时指向根登记表。查找规则：
+根登记表就是 `cairn.yaml`。它是一份完整的登记表，可以自己登记所有文档，也可以包含其他登记表，同时承载读取配置。查找规则：
 
 - 从当前目录开始向上查找最近的 `cairn.yaml`，找到即停。
 - 一直找到文件系统根仍没有时，报错并退出，提示运行 `cairn init`。
 - 环境变量 `CAIRN_CEILING_DIRS`（路径列表，分隔符同系统 `PATH`）可以限定查找上限，到达其中任一目录后不再向上。
-- `--root DIR` 直接指定根标记所在目录，跳过查找。
-- 子目录可以有自己的 `cairn.yaml` 和登记表，在其中运行得到该子项目的视角。上级登记表以 `registers` 登记子登记表，两个视角由此相连；本阶段只读取单个登记表，不展开子登记表。
-- `cairn.yaml` 中写 `root: true` 时，表示该项目没有父项目，以后展开上级登记表时不再越过它。
-- 所有 JSON 输出带 `root` 字段，值为根标记所在目录，使结果可以复现。登记表和文件中的路径一律相对根标记所在目录。
+- 最近的 `cairn.yaml` 就是根。子目录可以有自己的 `cairn.yaml`，在其中运行得到该子项目的视角；上级的 `cairn.yaml` 可以 `include` 它，两个视角由此相连。
+- `--root DIR` 直接指定 `cairn.yaml` 所在目录，跳过查找。
+- 所有 JSON 输出带 `root` 字段，值为 `cairn.yaml` 所在目录，使结果可以复现。
+
+### 包含规则
+
+1. **路径**：每份登记表中的路径，相对该登记表自己所在的目录解析。被包含的登记表单独使用时结果不变。
+2. **范围**：`include` 的目标必须位于根目录之内，不跨出根目录。
+3. **冲突**：同一份文档被多份登记表登记时，取 include 链上离根最近的那一份。距离相同且项目属性不同时报错。include 成环时报错。
+4. **配置**：`id_pattern`、`compat` 等读取配置只从根 `cairn.yaml` 读取，被包含登记表中的配置忽略。
+5. 被包含的登记表可以是任何符合 artifact-conventions 格式的登记表，例如已有仓库的 `docs/engineering-artifacts.yaml`。已有仓库只需在根目录新建一个包含它的 `cairn.yaml`，原登记表不用修改。
 
 查找、读取、推导和校验只使用文件系统，不调用 git。
 
@@ -67,15 +74,18 @@ relations:
 
 另有元类型 `registry`，即资产登记表本身。它与普通文档类型有三点不同：
 
-- 它不登记自己，自身的完整性由 git 历史、评审规则或上级登记表保证；
+- 它不登记自己，自身的完整性由 git 历史、评审规则或包含它的登记表保证；
 - 它是持续维护的文件，不冻结，不适用"较新指向较旧"的方向规则；
-- 它的出边只有 `registers`。
+- 它的出边只有 `registers` 和 `includes`，这两种关系也只能从它出发。
+
+`cairn.yaml` 和被包含的登记表都是 `registry`。
 
 ### 关系类型
 
 | rel | 形状 | 起点类型 | 终点类型 | 终点变化时，源文档应当 | 视图 |
 |---|---|---|---|---|---|
-| registers | arrow | registry | 任意，含 registry | 不适用；携带项目属性 | 默认隐藏 |
+| registers | arrow | registry | 除 registry 外的任意类型 | 不适用；携带项目属性 | 默认隐藏 |
+| includes | arrow | registry | registry | 不适用；被包含登记表的节点并入本项目 | 默认隐藏 |
 | supersedes | arrow | 任意 | 与起点同类型 | 不适用（终点退出现行） | 链 |
 | amends | arrow | 任意 | 与起点同类型 | 终点仍现行，阅读终点时须叠加本文 | 链 |
 | satisfies | arrow | design、specification、verification | requirement | 复审，并计入需求覆盖 | 覆盖 |
@@ -85,7 +95,7 @@ relations:
 | related | line | 任意 | 任意 | 不传播 | 邻域，默认不展开 |
 | mentions | arrow | 任意 | 任意 | 不传播 | 只计数 |
 
-除 `registers` 外，arrow 的方向一律从较晚写成的文档指向较早的文档，关系由前者声明。line 不区分两端，只需在一端声明。`registers` 由登记表的条目声明，每个条目就是一条边。
+除 `registers`、`includes` 外，arrow 的方向一律从较晚写成的文档指向较早的文档，关系由前者声明。line 不区分两端，只需在一端声明。`registers` 由登记表的 `artifacts` 条目声明，每个条目是一条边；`includes` 由登记表的 `include` 列表声明。
 
 ### 视图
 
@@ -102,17 +112,31 @@ relations:
 
 ## 输入
 
-- `--root`：项目根标记所在目录，默认按"项目根"一节向上查找。
+- `--root`：`cairn.yaml` 所在目录，默认按"项目根"一节向上查找。
 
-映射配置 `cairn.yaml` 示例：
+`cairn.yaml` 示例：
 
 ```yaml
-registry: docs/engineering-artifacts.yaml       # 根登记表
-id_pattern: '\b(?:XX-[A-Z]+-\d{3}|ADR-\d{4})\b'
-compat:                     # 兼容层，可选
-  field_relations:          # 字段名 → 关系类型
+schema_version: 1
+integrity: sha256
+id_pattern: '\b(?:XX-[A-Z]+-\d{3}|ADR-\d{4})\b'   # 读取配置，只在根生效
+compat:                                           # 兼容层，可选
+  field_relations:                                # 字段名 → 关系类型
     需求依据: satisfies
     决策依据: governed_by
+include:                                          # includes 关系
+  - docs/engineering-artifacts.yaml
+  - components/boardcom/cairn.yaml
+types:
+  design:
+    purpose: "设计方案"
+artifacts:                                        # 每个条目是一条 registers 关系
+  - id: XX-DSN-001
+    type: design
+    path: docs/design/link.md
+    status: draft
+    scope: ["project"]
+    sha256: 3f9a…c21e
 ```
 
 ## 文件 meta
@@ -289,6 +313,7 @@ Markdown 链接相对所在文件解析：去掉锚点，统一使用 `/` 分隔
 - 一条指向未登记 ID 的关系、一个未知关系类型，验证 `show` 不中断。
 - 一份 CRLF 换行的文件，验证解析结果与 LF 相同。
 - **find**：同一个词分别出现在 ID、标题和正文中，验证分档和排序；中英文混合的词。
+- **包含**：根 `cairn.yaml` 包含一份子登记表，验证路径相对子登记表解析、离根近者优先、同距冲突报错、include 成环报错、跨出根目录报错。
 - **根查找**：在 fixture 的子目录中运行，找到上级的 `cairn.yaml`；设置 `CAIRN_CEILING_DIRS` 后，在上限以内没有 `cairn.yaml` 的目录中运行，报错退出。
 
 `tests/fixtures/compat/` 用字段行和登记表 `supersedes` 声明关系，验证兼容层。
@@ -332,7 +357,7 @@ Markdown 链接相对所在文件解析：去掉锚点，统一使用 `/` 分隔
 
 ### `cairn init`
 
-在当前目录创建 `cairn.yaml` 和一份空的根登记表，`types` 取自元模型。目标文件已存在时拒绝执行。只新建文件，不修改已有的受控资产。
+在当前目录创建一份空的 `cairn.yaml`，`types` 取自元模型。目标文件已存在时拒绝执行。发现当前目录下已有 `docs/engineering-artifacts.yaml` 时，自动把它写进 `include`。只新建文件，不修改已有的受控资产。
 
 ### `cairn sync [ID...]`
 
@@ -343,6 +368,7 @@ Markdown 链接相对所在文件解析：去掉锚点，统一使用 `/` 分隔
 - 兼容层是否需要读取 ADR 的 Nygard 行首声明（`Supersedes [..](..)`、`Amends [..](..)`），还是由目标仓库逐步改为 meta。
 - 字段值中混有追溯性引用时（例如"与其他文档的关系"），由哪些字段进入 `compat.field_relations`。
 - 关系携带的内容除 `note` 外是否需要结构化字段，例如所依据的章节。
+- 是否允许 include 其他仓库的登记表。允许的话需要锁定对方版本，本阶段不支持。
 - 受管块记录哪些项目属性：只记 `status`，还是同时记 `scope` 和 `approval`。
 - 文档被多个登记表登记时，受管块记录哪个项目的属性。
 - `registry_check.py` 迁入 cairn，还是保留在 embedded-skills 中并同步采用受管块去除规则。
