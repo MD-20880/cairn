@@ -1,5 +1,5 @@
 ---
-id: CRN-TYP-001
+id: CRN-TYPE-REQUIREMENT
 type: doctype
 title: 'requirement：需求'
 revision: 1

@@ -1,5 +1,5 @@
 ---
-id: CRN-TYP-003
+id: CRN-TYPE-DESIGN
 type: doctype
 title: 'design：设计方案'
 revision: 1

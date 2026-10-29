@@ -1,5 +1,5 @@
 ---
-id: CRN-TYP-009
+id: CRN-TYPE-REGISTRY
 type: doctype
 title: 'registry：登记表'
 revision: 1

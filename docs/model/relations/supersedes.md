@@ -1,5 +1,5 @@
 ---
-id: CRN-REL-003
+id: CRN-REL-SUPERSEDES
 type: reltype
 title: 'supersedes：取代'
 revision: 1

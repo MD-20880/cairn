@@ -1,5 +1,5 @@
 ---
-id: CRN-TYP-007
+id: CRN-TYPE-REFERENCE
 type: doctype
 title: 'reference：外部依据'
 revision: 1

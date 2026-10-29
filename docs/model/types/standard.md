@@ -1,5 +1,5 @@
 ---
-id: CRN-TYP-006
+id: CRN-TYPE-STANDARD
 type: doctype
 title: 'standard：工程规则'
 revision: 1

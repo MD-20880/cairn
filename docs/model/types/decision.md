@@ -1,5 +1,5 @@
 ---
-id: CRN-TYP-002
+id: CRN-TYPE-DECISION
 type: doctype
 title: 'decision：决策记录（ADR）'
 revision: 1

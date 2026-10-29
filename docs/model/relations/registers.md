@@ -1,5 +1,5 @@
 ---
-id: CRN-REL-001
+id: CRN-REL-REGISTERS
 type: reltype
 title: 'registers：登记'
 revision: 1

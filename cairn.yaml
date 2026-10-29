@@ -7,7 +7,7 @@
 schema_version: 1
 coverage: full
 integrity: sha256
-id_pattern: '\bCRN-[A-Z]+-\d{3}\b'
+id_pattern: '\bCRN-[A-Z]+-(?:\d{3}|[A-Z][A-Z0-9_]*)\b'
 types:
   requirement:
     purpose: "cairn 的需求"
@@ -21,7 +21,6 @@ types:
     purpose: "元模型中的关系类型描述"
 artifacts:
   - id: CRN-REQ-001
-    title: 'cairn 需求'
     type: requirement
     path: docs/requirements.md
     status: draft
@@ -29,185 +28,162 @@ artifacts:
     sha256: 9c8d0e0531f6af46214b2be317fae862a8516c3c4adb1872b00bd90fda00cd75
 
   - id: CRN-DSN-001
-    title: 'cairn 第一阶段设计：检索'
     type: design
     path: docs/design/first-slice.md
     status: draft
     scope: ["project"]
-    sha256: b0fe429c09f0392e318fef65734a7716f97646854401e19f68e5daf8932630f6
+    sha256: 26ccbb5f677774efbcd82e16f9cef3b4de0e58648d982aee7331c85dfa8306dc
 
   - id: CRN-GLO-001
-    title: 'cairn 词汇表'
     type: glossary
     path: docs/glossary.md
     status: draft
     scope: ["project"]
     sha256: 8989a20b24235f88398ea9d193c0ed1192d777ebdd180c32f546c46f598734c5
 
-  - id: CRN-REL-001
-    title: 'registers：登记'
+  - id: CRN-REL-REGISTERS
     type: reltype
     path: docs/model/relations/registers.md
     status: draft
     scope: ["project"]
-    sha256: 78639a153481627578d7e9b12433ee3f6362e6447584c5a06934e511867fd820
+    sha256: eb5cd16dc182dd7922d9b36ca60dc3ae3be6156ad531f9daa34c226c0f1cc878
 
-  - id: CRN-REL-002
-    title: 'includes：包含'
+  - id: CRN-REL-INCLUDES
     type: reltype
     path: docs/model/relations/includes.md
     status: draft
     scope: ["project"]
-    sha256: 3595e31940334fa72e838e663718c9f7a2fa0d9d40a29f37d67e213705f7031e
+    sha256: 1a0a9ee6ea6c3bff498226d000a7db062f97cd02c142b5e2e11accbbc993119c
 
-  - id: CRN-REL-003
-    title: 'supersedes：取代'
+  - id: CRN-REL-SUPERSEDES
     type: reltype
     path: docs/model/relations/supersedes.md
     status: draft
     scope: ["project"]
-    sha256: 9e2339a0e294e633baa27da674bce7b7b714fe25e9eaf4d3990bfbde37212640
+    sha256: 239f1eafd189969d4b1bd5414f32926245abc18cfa55f891aabf1fcb7367da20
 
-  - id: CRN-REL-004
-    title: 'amends：修订补充'
+  - id: CRN-REL-AMENDS
     type: reltype
     path: docs/model/relations/amends.md
     status: draft
     scope: ["project"]
-    sha256: e224362d597e1f85d9e11ded3a4673df7a5121a164cbf6408afbfa0b38322dec
+    sha256: 2e55bde6ebaf1aa25ea6a8330d59e1b366c527cb536b65f2b1ea13746e81acc0
 
-  - id: CRN-REL-005
-    title: 'satisfies：满足'
+  - id: CRN-REL-SATISFIES
     type: reltype
     path: docs/model/relations/satisfies.md
     status: draft
     scope: ["project"]
-    sha256: c2a83f9dda3850280e654116825cd6fa83ea3683fb8f23a752880ae83f1fe0d2
+    sha256: c771a29be4cb7221ac1f7cb6311c8d0dd64f2a98b57b12a004c7fe57756f735f
 
-  - id: CRN-REL-006
-    title: 'governed_by：受约束于'
+  - id: CRN-REL-GOVERNED_BY
     type: reltype
     path: docs/model/relations/governed_by.md
     status: draft
     scope: ["project"]
-    sha256: 8b719de6c726361d629276b829a00fce5f1cd182eafe49b04c36eac34da8ccd9
+    sha256: daa29286443cc4736864b4b141d65adfd5b62bd748a69803ecc9c73ab7b5d238
 
-  - id: CRN-REL-007
-    title: 'depends_on：依赖'
+  - id: CRN-REL-DEPENDS_ON
     type: reltype
     path: docs/model/relations/depends_on.md
     status: draft
     scope: ["project"]
-    sha256: 5423e494fd25cae3fad55d2f01e7ce0a29f49f1a768b675f1e6f146a29625cf5
+    sha256: e9ed8ac8546cfeb125e57baf36a476fb55dfb17fec39dd8d66aec671b8de21f5
 
-  - id: CRN-REL-008
-    title: 'verifies：验证'
+  - id: CRN-REL-VERIFIES
     type: reltype
     path: docs/model/relations/verifies.md
     status: draft
     scope: ["project"]
-    sha256: f782d34a9623931168ccab9b3e815a2a6b973f935bf7cac0a4697666b6128b01
+    sha256: 78d947112fcef28d85f4f047a944e2f3dd782d7e271e82b39c36029d98f1839e
 
-  - id: CRN-REL-009
-    title: 'related：相关'
+  - id: CRN-REL-RELATED
     type: reltype
     path: docs/model/relations/related.md
     status: draft
     scope: ["project"]
-    sha256: b332b0adc2f72cc612afc2393771a3060e4f8afd6946976640f2dfa7425bb872
+    sha256: 77fd09f1e14a7840be81c26eb1d30f351e088ad803bd6bfb523900e7970e045d
 
-  - id: CRN-REL-010
-    title: 'mentions：提及'
+  - id: CRN-REL-MENTIONS
     type: reltype
     path: docs/model/relations/mentions.md
     status: draft
     scope: ["project"]
-    sha256: dd20c67dfa1ca7aa5eb435d97ddfa73e4c58eecec4171b4b4ce4b92e5b047cc3
+    sha256: 3ecb1c43ea3e6c054a147f63b9952ef87c9431f7fc59176d906feb27d62bcad6
 
-  - id: CRN-TYP-001
-    title: 'requirement：需求'
+  - id: CRN-TYPE-REQUIREMENT
     type: doctype
     path: docs/model/types/requirement.md
     status: draft
     scope: ["project"]
-    sha256: c3676b1be38bcf99fdb29a9d8677e58f89ef4829f09d9da94f6a888859c4d64a
+    sha256: b1616f6fd6615de76c17066d0eba72d558729899a7deb438c497e5cfde6313b1
 
-  - id: CRN-TYP-002
-    title: 'decision：决策记录（ADR）'
+  - id: CRN-TYPE-DECISION
     type: doctype
     path: docs/model/types/decision.md
     status: draft
     scope: ["project"]
-    sha256: 3a278bea60c9dc6260986682da6ba578b422f873765d448192d115bbb3f9bc7f
+    sha256: a1f42ed35c68f048697a833a8ebe445bd8f891ac3a61e8645fed0820e2e4c8ea
 
-  - id: CRN-TYP-003
-    title: 'design：设计方案'
+  - id: CRN-TYPE-DESIGN
     type: doctype
     path: docs/model/types/design.md
     status: draft
     scope: ["project"]
-    sha256: 694cbf77681deba3fc6b1261c257602fa07593530430df26b6f7c4fe402d135a
+    sha256: 8d8cb7401649c9f7540b7e0739e585f1f90fec2517d6838af90bb56cae29cfe9
 
-  - id: CRN-TYP-004
-    title: 'specification：规范'
+  - id: CRN-TYPE-SPECIFICATION
     type: doctype
     path: docs/model/types/specification.md
     status: draft
     scope: ["project"]
-    sha256: ee6d5984fa9831c61eeedc877822c810b7c42df20e61f18c5cd3ccff6ab0515c
+    sha256: f7219ddd83af4034c72d01be0ebeceb1dc8d92f243afeb69945b94b36567355f
 
-  - id: CRN-TYP-005
-    title: 'verification：验证'
+  - id: CRN-TYPE-VERIFICATION
     type: doctype
     path: docs/model/types/verification.md
     status: draft
     scope: ["project"]
-    sha256: 9ca06e890a91f605e9a2a0410fb51365da094bcbb7df463735e89aa6add99222
+    sha256: 8f71e9698e69c50b433996fa46e4ed5b8ef8803d52decb86b89a172b6c41276f
 
-  - id: CRN-TYP-006
-    title: 'standard：工程规则'
+  - id: CRN-TYPE-STANDARD
     type: doctype
     path: docs/model/types/standard.md
     status: draft
     scope: ["project"]
-    sha256: d5ee4c01e87667821a83dd1d1c15371db02f4b9c68abebb8df94caf81cc61d87
+    sha256: 1c44af16678e9e055d161b88e4f62bcdc4f1b0fb4afa99edb5c68e4b70aee1d1
 
-  - id: CRN-TYP-007
-    title: 'reference：外部依据'
+  - id: CRN-TYPE-REFERENCE
     type: doctype
     path: docs/model/types/reference.md
     status: draft
     scope: ["project"]
-    sha256: b7f56ca34513cb8197562c53cacceb4691fd5fd000a90608f0c780bc8dbd1077
+    sha256: f3d22cb20e42ab1ff839456db9e8ed6b1a93a4f646c9641ed382e0aa000be3b6
 
-  - id: CRN-TYP-008
-    title: 'glossary：术语表'
+  - id: CRN-TYPE-GLOSSARY
     type: doctype
     path: docs/model/types/glossary.md
     status: draft
     scope: ["project"]
-    sha256: 82189ce75e98180ca724a1060594b2d46b898d25c2f21c42c64c2cb448301707
+    sha256: 9aedc93c0e7739fa3c9327e91eb77ebb2b9cf067ff5ceb2f8798d60346737d08
 
-  - id: CRN-TYP-009
-    title: 'registry：登记表'
+  - id: CRN-TYPE-REGISTRY
     type: doctype
     path: docs/model/types/registry.md
     status: draft
     scope: ["project"]
-    sha256: 68af6baac6d4cb5784f7cce2195cf1a25a044b07e8e838527116f97c265f2e13
+    sha256: f425d9a95bcd724851b2ee374e862de6fedab75348561a72cca392dd77b79a6c
 
-  - id: CRN-TYP-010
-    title: 'doctype：类型描述'
+  - id: CRN-TYPE-DOCTYPE
     type: doctype
     path: docs/model/types/doctype.md
     status: draft
     scope: ["project"]
-    sha256: db9e2ee96b2bec7c7cfc1a8ab7019cb348d9c4e6dcc65ca70a91c0f8751046da
+    sha256: cc9cbcbd40ac188f3c8f239caa3c5c533cbdb31d6b0833fba426676cd255a463
 
-  - id: CRN-TYP-011
-    title: 'reltype：关系描述'
+  - id: CRN-TYPE-RELTYPE
     type: doctype
     path: docs/model/types/reltype.md
     status: draft
     scope: ["project"]
-    sha256: c418e3d26ee02c3e3574e3b7196c4d1acbf7f7c5520bb414fc6ba6c1b869ac68
+    sha256: 851886c3e8275ca2113419997fc083aaae7c69daee6ed4014efa22ebf41a678d

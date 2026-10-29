@@ -1,5 +1,5 @@
 ---
-id: CRN-TYP-005
+id: CRN-TYPE-VERIFICATION
 type: doctype
 title: 'verification：验证'
 revision: 1

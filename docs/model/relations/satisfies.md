@@ -1,5 +1,5 @@
 ---
-id: CRN-REL-005
+id: CRN-REL-SATISFIES
 type: reltype
 title: 'satisfies：满足'
 revision: 1

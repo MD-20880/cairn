@@ -1,5 +1,5 @@
 ---
-id: CRN-TYP-004
+id: CRN-TYPE-SPECIFICATION
 type: doctype
 title: 'specification：规范'
 revision: 1

@@ -1,5 +1,5 @@
 ---
-id: CRN-REL-006
+id: CRN-REL-GOVERNED_BY
 type: reltype
 title: 'governed_by：受约束于'
 revision: 1

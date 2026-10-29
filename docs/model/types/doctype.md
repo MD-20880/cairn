@@ -1,5 +1,5 @@
 ---
-id: CRN-TYP-010
+id: CRN-TYPE-DOCTYPE
 type: doctype
 title: 'doctype：类型描述'
 revision: 1

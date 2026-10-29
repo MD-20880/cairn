@@ -1,5 +1,5 @@
 ---
-id: CRN-REL-008
+id: CRN-REL-VERIFIES
 type: reltype
 title: 'verifies：验证'
 revision: 1

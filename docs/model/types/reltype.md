@@ -1,5 +1,5 @@
 ---
-id: CRN-TYP-011
+id: CRN-TYPE-RELTYPE
 type: doctype
 title: 'reltype：关系描述'
 revision: 1

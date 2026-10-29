@@ -1,5 +1,5 @@
 ---
-id: CRN-REL-010
+id: CRN-REL-MENTIONS
 type: reltype
 title: 'mentions：提及'
 revision: 1

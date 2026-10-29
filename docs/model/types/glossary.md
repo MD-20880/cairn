@@ -1,5 +1,5 @@
 ---
-id: CRN-TYP-008
+id: CRN-TYPE-GLOSSARY
 type: doctype
 title: 'glossary：术语表'
 revision: 1

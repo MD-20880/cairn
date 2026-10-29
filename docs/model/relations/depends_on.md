@@ -1,5 +1,5 @@
 ---
-id: CRN-REL-007
+id: CRN-REL-DEPENDS_ON
 type: reltype
 title: 'depends_on：依赖'
 revision: 1

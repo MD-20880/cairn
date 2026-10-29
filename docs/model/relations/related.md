@@ -1,5 +1,5 @@
 ---
-id: CRN-REL-009
+id: CRN-REL-RELATED
 type: reltype
 title: 'related：相关'
 revision: 1

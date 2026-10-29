@@ -1,5 +1,5 @@
 ---
-id: CRN-REL-004
+id: CRN-REL-AMENDS
 type: reltype
 title: 'amends：修订补充'
 revision: 1

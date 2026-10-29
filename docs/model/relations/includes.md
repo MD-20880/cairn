@@ -1,5 +1,5 @@
 ---
-id: CRN-REL-002
+id: CRN-REL-INCLUDES
 type: reltype
 title: 'includes：包含'
 revision: 1
