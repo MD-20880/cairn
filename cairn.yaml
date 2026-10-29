@@ -38,7 +38,7 @@ artifacts:
     path: docs/design/metamodel.md
     status: draft
     scope: ["project"]
-    sha256: 4b9d24700d61505fc6dade493e8535b62af631699deaf1436869a8123042a823
+    sha256: c27e64fac64969344f25f3923a70835bef600cbdc15f092fc305457f8171392a
 
   - id: CRN-GLOSSARY
     type: glossary
