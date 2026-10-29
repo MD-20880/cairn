@@ -32,7 +32,7 @@ artifacts:
     path: docs/design/first-slice.md
     status: draft
     scope: ["project"]
-    sha256: ef059cac8d4137c77749b9b1d02f63e3b1ae9a64a698caa549964913e6205dc6
+    sha256: 9e511e22c4070b336d2c5c86ac3ee00f63d96d8fda50125c5a338070f5125524
 
   - id: CRN-GLO-001
     type: glossary
@@ -53,7 +53,7 @@ artifacts:
     path: docs/model/relations/includes.md
     status: draft
     scope: ["project"]
-    sha256: 613ff329d59cc36914780b4267d61554ca37e702431c64cb2d744747815d8128
+    sha256: 32b278f29eee07f1be3c88910219a49f627206cc0fa91ea4ef211a319df5a2ec
 
   - id: CRN-REL-003
     type: reltype

@@ -57,11 +57,11 @@ relations:
 ### 包含规则
 
 1. **落到文件**：`include` 的每一项是一个文件路径，不是文档 ID。登记表以文件路径作为身份，不需要也不分配 ID，也不出现在任何 `artifacts` 条目中。文件名不限，例如 `docs/engineering-artifacts.yaml`、`components/boardcom/registry.yaml`。目标文件不是合法的登记表时报错。
-2. **路径**：每份登记表中的路径，相对该登记表文件所在的目录解析。被包含的登记表单独使用时结果不变。
+2. **路径**：每份登记表中的路径，默认相对该登记表文件所在的目录解析，被包含的登记表单独使用时结果不变。`include` 项可以写成 `{path, base}`，用 `base` 指定被包含登记表中路径的解析基准（相对包含方所在目录）。artifact-conventions 格式的登记表中路径相对仓库根，包含它时写 `base: .`。
 3. **范围**：`include` 的目标必须位于根目录之内，不跨出根目录。
 4. **冲突**：同一份文档被多份登记表登记时，取 include 链上离根最近的那一份。距离相同且项目属性不同时报错。include 成环时报错。
 5. **配置**：`id_pattern`、`compat` 等读取配置只从根登记表读取，被包含登记表中的配置忽略。
-6. 被包含的登记表可以是任何符合 artifact-conventions 格式的登记表。已有仓库只需在根目录新建一个包含原登记表文件的 `cairn.yaml`，原登记表不用修改。
+6. 被包含的登记表可以是任何符合 artifact-conventions 格式的登记表。已有仓库只需在根目录新建一个 `cairn.yaml`，以 `{path: docs/engineering-artifacts.yaml, base: .}` 包含原登记表，原登记表不用修改。
 
 查找、读取、推导和校验只使用文件系统，不调用 git。
 
@@ -103,7 +103,8 @@ compat:                                           # 兼容层，可选
     需求依据: satisfies
     决策依据: governed_by
 include:                                          # includes 关系：文件路径，文件名不限
-  - docs/engineering-artifacts.yaml
+  - path: docs/engineering-artifacts.yaml        # 旧格式：路径相对仓库根
+    base: .
   - components/boardcom/registry.yaml
 types:
   design:
@@ -334,7 +335,7 @@ Markdown 链接相对所在文件解析：去掉锚点，统一使用 `/` 分隔
 
 ### `cairn init`
 
-在当前目录创建一份空的 `cairn.yaml`，`types` 取自元模型。目标文件已存在时拒绝执行。发现当前目录下已有 `docs/engineering-artifacts.yaml` 时，自动把它写进 `include`。只新建文件，不修改已有的受控资产。
+在当前目录创建一份空的 `cairn.yaml`，`types` 取自元模型。目标文件已存在时拒绝执行。发现当前目录下已有 `docs/engineering-artifacts.yaml` 时，自动以 `{path: docs/engineering-artifacts.yaml, base: .}` 把它写进 `include`。只新建文件，不修改已有的受控资产。
 
 ### `cairn sync [ID...]`
 
