@@ -1,10 +1,10 @@
 ---
-id: CRN-DSN-001
+id: CRN-DESIGN-RETRIEVAL
 type: design
 title: 'cairn 第一阶段设计：检索'
-revision: 3
+revision: 4
 relations:
-  satisfies: [CRN-REQ-001]
+  satisfies: [CRN-REQUIREMENTS]
 ---
 
 # cairn 第一阶段设计：检索
@@ -98,7 +98,7 @@ relations:
 ```yaml
 schema_version: 1
 integrity: sha256
-id_pattern: '\b(?:XX-[A-Z]+-\d{3}|ADR-\d{4})\b'   # 读取配置，只在根生效
+id_pattern: '\bXX-[A-Z0-9-]+\b'    # 可选，只用于发现未登记的 ID；只在根生效
 compat:                                           # 兼容层，可选
   field_relations:                                # 字段名 → 关系类型
     需求依据: satisfies
@@ -111,7 +111,7 @@ types:
   design:
     purpose: "设计方案"
 artifacts:                                        # 每个条目是一条 registers 关系
-  - id: XX-DSN-001
+  - id: XX-DESIGN-A2-LINK
     type: design
     path: docs/design/link.md
     status: draft
@@ -125,12 +125,12 @@ artifacts:                                        # 每个条目是一条 regist
 
 ```yaml
 ---
-id: XX-DSN-001
+id: XX-DESIGN-A2-LINK
 type: design
 title: 'A2 链路设计'
 revision: 2
 relations:
-  satisfies: [XX-REQ-001]
+  satisfies: [XX-REQ-A2]
   governed_by:
     - to: ADR-0014
       note: A1、A2 独立升级
@@ -150,13 +150,11 @@ project:            # 受管块：由工具写入，手工不要修改
 
 ## ID 命名
 
-登记表只记录 ID，不重复标题，所以 ID 本身应尽量能看出是哪份文档：
+ID 的格式不作限制，只要求在根登记表推导出的范围内唯一，并且已经登记。ID 一经发布不再更改，文件改名或移动时 ID 保持不变。
 
-- 同类文档只有一份、或天然有名字时，用名字作 ID 的最后一段，例如 `CRN-TYPE-DESIGN`、`CRN-REL-SATISFIES`。
-- 同类文档会不断增加、没有稳定名字时，用流水号，例如 `CRN-REQ-001`、`ADR-0014`。
-- ID 一经发布不再更改，文件改名或移动时 ID 保持不变。
+建议让 ID 本身看得出是哪份文档，例如 `CRN-REQUIREMENTS`、`CRN-DESIGN-RETRIEVAL`、`CRN-TYPE-DESIGN`。纯流水号（如 `ADR-0014`）也合法，但不利于检索和引用时辨认。
 
-项目的 `id_pattern` 需要同时覆盖两种写法。
+由于格式不限，cairn 不靠正则识别 ID，而是用已登记 ID 的集合去匹配：正文和字段值中出现的已登记 ID（前后不是字母、数字、`_` 或 `-`）才算一次提及。`id_pattern` 是可选配置，只用于找出"看起来像 ID 但未登记"的写法，供后续 `check` 报告。
 
 ## 正文标记
 
@@ -218,7 +216,7 @@ approval:
 兼容层读取已有文控仓库的既有写法，产生 basis 为 `field` 的边：
 
 1. 登记表条目的 `supersedes` 字段（单值或列表）。
-2. 字段行：`字段名[:：] 值`（字段名可以加粗），或两列表格行 `| 字段名 | 值 |`。只认 `compat.field_relations` 中列出的字段名。值中每个匹配 `id_pattern` 的 ID、每个能解析到登记路径的链接，各生成一条边。
+2. 字段行：`字段名[:：] 值`（字段名可以加粗），或两列表格行 `| 字段名 | 值 |`。只认 `compat.field_relations` 中列出的字段名。值中每个已登记的 ID、每个能解析到登记路径的链接，各生成一条边。
 
 兼容层不读取正文中的状态声明（例如 ADR 的 `## Status`）。状态以登记表为准。
 
@@ -312,7 +310,7 @@ Markdown 链接相对所在文件解析：去掉锚点，统一使用 `/` 分隔
 ## 验收
 
 1. 三个命令在 fixture 上的 `--json` 输出与预期输出文件逐字节一致，在 Linux 和 Windows 上都成立。
-2. 在 cairn 仓库自身上运行 `cairn show CRN-DSN-001`，显示一条指向 CRN-REQ-001 的 satisfies 边，basis 为 declared。
+2. 在 cairn 仓库自身上运行 `cairn show CRN-DESIGN-RETRIEVAL`，显示一条指向 CRN-REQUIREMENTS 的 satisfies 边，basis 为 declared。
 3. 在一个真实的文控仓库上，借助兼容层，`show` 能还原一张事先手工整理的关系表，并正确标出每条边的 basis。
 4. 在同一个仓库上回答"A2 OTA 前向兼容的决策依据是什么？现行方案、协议与验证记录分别在哪里？"：`find A2 OTA --expand` 加上若干次 `show`，能找到相关的需求、ADR 和协议，标出旧方案已被取代、现行方案是否已被接受，没有验证关系的地方显示"未建立追溯"，并附带原始文件位置。
 
@@ -343,6 +341,7 @@ Markdown 链接相对所在文件解析：去掉锚点，统一使用 `/` 分隔
 | W_APPROVAL_STALE | 当前校验值与 `approval.sha256` 不同，文档在批准后被修改 |
 | W_MANAGED_DRIFT | 文件受管块与登记表的项目属性不一致 |
 | I_UNRESOLVED_LINK | 链接指向未登记的路径 |
+| I_UNREGISTERED_ID | 正文中有匹配 `id_pattern` 但未登记的 ID（仅在配置了 `id_pattern` 时） |
 
 以下两个是写命令，也是 cairn 仅有的写操作。
 
@@ -354,6 +353,17 @@ Markdown 链接相对所在文件解析：去掉锚点，统一使用 `/` 分隔
 
 按登记表把项目属性写入各文件的受管块。只改受管块，不改其他内容；由于校验值不包含受管块，写入后 `sha256` 不变。冻结文件的受管块同样更新，例如旧文档被取代后写入 `superseded`。
 
+### 编辑插件
+
+满足 R-42。目标是写文档时少查、少抄 ID，功能保持很少：
+
+- **形态**：VS Code 插件。候选数据通过调用 `cairn find --json` 和 `cairn ls --json` 获取，不在插件里再实现一遍仓库解析，保证和命令行结果一致。
+- **触发**：输入触发语法后弹出候选列表，按 ID、标题、类型和有效状态显示，继续输入即按 `find` 的规则过滤。触发语法可以配置，默认两种：`[[` 写入 Markdown 链接 `[标题](相对路径)`；`@关系名(` 写入关系标记，例如 `@satisfies(CRN-REQUIREMENTS)`，关系名按元模型补全，候选按该关系允许的终点类型过滤。
+- **只写不改**：插件只在光标处插入文本，不修改文件中的其他内容，也不写受管块和登记表。
+- **第二步再做**：悬停显示对端标题和状态、跳转到对端文件、对未登记 ID 标出提示。
+
+它依赖 `find` 和 `ls` 的 JSON 输出稳定，所以排在第一阶段之后，作为第一个后续交付。
+
 ## 待确认
 
 - 兼容层是否需要读取 ADR 的 Nygard 行首声明（`Supersedes [..](..)`、`Amends [..](..)`），还是由目标仓库逐步改为 meta。
@@ -362,4 +372,5 @@ Markdown 链接相对所在文件解析：去掉锚点，统一使用 `/` 分隔
 - 是否允许 include 其他仓库的登记表。允许的话需要锁定对方版本，本阶段不支持。
 - 受管块记录哪些项目属性：只记 `status`，还是同时记 `scope` 和 `approval`。
 - 文档被多个登记表登记时，受管块记录哪个项目的属性。
+- 编辑插件写入链接时，链接文字用标题还是 ID，或两者都带。
 - `registry_check.py` 迁入 cairn，还是保留在 embedded-skills 中并同步采用受管块去除规则。

@@ -1,8 +1,8 @@
 ---
-id: CRN-GLO-001
+id: CRN-GLOSSARY
 type: glossary
 title: 'cairn 词汇表'
-revision: 3
+revision: 4
 ---
 
 # cairn 词汇表
@@ -112,7 +112,7 @@ revision: 3
 ## 抽取
 
 **映射配置**（config）
-：某个项目专属的规则，写在根登记表中，规定 ID 的格式，以及兼容层中字段名到关系类型的对应关系。
+：某个项目专属的规则，写在根登记表中，例如兼容层中字段名到关系类型的对应关系。
 
 **兼容层**（compat）
 ：读取已有文控仓库既有写法的抽取规则。它让 cairn 能用于尚未采用文件 meta 的仓库，但不是模型的设计前提。

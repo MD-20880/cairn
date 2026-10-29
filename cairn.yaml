@@ -7,7 +7,6 @@
 schema_version: 1
 coverage: full
 integrity: sha256
-id_pattern: '\bCRN-[A-Z]+-(?:\d{3}|[A-Z][A-Z0-9_]*)\b'
 types:
   requirement:
     purpose: "cairn 的需求"
@@ -20,26 +19,26 @@ types:
   reltype:
     purpose: "元模型中的关系类型描述"
 artifacts:
-  - id: CRN-REQ-001
+  - id: CRN-REQUIREMENTS
     type: requirement
     path: docs/requirements.md
     status: draft
     scope: ["project"]
-    sha256: 9c8d0e0531f6af46214b2be317fae862a8516c3c4adb1872b00bd90fda00cd75
+    sha256: afafc3eadc5f9633375ddc1d0e6c5b4c55bbb7a1821918f1f42992eba151e5e0
 
-  - id: CRN-DSN-001
+  - id: CRN-DESIGN-RETRIEVAL
     type: design
-    path: docs/design/first-slice.md
+    path: docs/design/retrieval.md
     status: draft
     scope: ["project"]
-    sha256: 26ccbb5f677774efbcd82e16f9cef3b4de0e58648d982aee7331c85dfa8306dc
+    sha256: 1e6061cef014b4b57e11138b4de2553392ea948548d692007f1b51b4d377c136
 
-  - id: CRN-GLO-001
+  - id: CRN-GLOSSARY
     type: glossary
     path: docs/glossary.md
     status: draft
     scope: ["project"]
-    sha256: 8989a20b24235f88398ea9d193c0ed1192d777ebdd180c32f546c46f598734c5
+    sha256: 02490e13083db490fb2b3271a958da8fd3f909519622557f02e994cf58b721e6
 
   - id: CRN-REL-REGISTERS
     type: reltype
