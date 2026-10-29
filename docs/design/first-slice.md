@@ -177,7 +177,7 @@ approval:
 
 登记表的 `status` 表示文档在项目中的接受状态：`draft`（未接受）、`active`（已接受）、`archived`（退出使用）。有效状态在此基础上推导：
 
-1. 存在一个**被接受过**的文档以 `supersedes` 指向本文档时，本文档的有效状态为 `superseded`。被接受过，指登记表状态为 `active` 或 `superseded`：后者说明它曾被接受，之后又被更新的文档取代。这样多代取代链 A ← B ← C 中，B 已被 C 取代，A 仍然保持 superseded。
+1. 存在一个**被接受过**的文档以 `supersedes` 指向本文档时，本文档的有效状态为 `superseded`。被接受过，指登记表状态为 `active` 或 `superseded`（后者说明它曾被接受，之后又被更新的文档取代），或者登记条目带有 `approval`。最后一条覆盖已被接受、之后又被归档的后继：归档表示退出使用，不撤销它当初对前任的取代，前任不会因此恢复现行。没有 `approval` 的 `archived` 后继视为从未被接受。这样多代取代链 A ← B ← C 中，B 已被 C 取代，A 仍然保持 superseded。
 2. 否则取登记表的 `status`；登记表写的是 `superseded` 时按 `active` 处理，因为它曾被接受，而取代它的文档还没有被接受。
 
 推导只看关系和后继是否被接受过，不用本文档自己在登记表中的 `superseded` 来证明自己已被取代。登记表状态与推导结果不一致时报 `W_SUPERSEDES`，包括两种情况：登记为 `superseded` 但没有被接受过的后继（含后继仍是 draft，或根本没有后继）；登记为 `draft` 或 `active` 但已有被接受过的后继。
