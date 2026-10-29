@@ -175,10 +175,10 @@ approval:
 
 登记表的 `status` 表示文档在项目中的接受状态：`draft`（未接受）、`active`（已接受）、`archived`（退出使用）。有效状态在此基础上推导：
 
-1. 存在一个 `active` 文档以 `supersedes` 指向本文档时，本文档的有效状态为 `superseded`。
+1. 存在一个**被接受过**的文档以 `supersedes` 指向本文档时，本文档的有效状态为 `superseded`。被接受过，指登记表状态为 `active` 或 `superseded`：后者说明它曾被接受，之后又被更新的文档取代。这样多代取代链 A ← B ← C 中，B 已被 C 取代，A 仍然保持 superseded。
 2. 否则取登记表的 `status`；登记表写的是 `superseded` 时按 `active` 处理，因为它曾被接受，而取代它的文档还没有被接受。
 
-推导只看关系和后继的接受状态，不读登记表中的 `superseded`。登记表状态与推导结果不一致时报 `W_SUPERSEDES`，包括两种情况：登记为 `superseded` 但没有被接受的后继（含后继仍是 draft，或根本没有后继）；登记为 `draft` 或 `active` 但已有被接受的后继。
+推导只看关系和后继是否被接受过，不用本文档自己在登记表中的 `superseded` 来证明自己已被取代。登记表状态与推导结果不一致时报 `W_SUPERSEDES`，包括两种情况：登记为 `superseded` 但没有被接受过的后继（含后继仍是 draft，或根本没有后继）；登记为 `draft` 或 `active` 但已有被接受过的后继。
 
 ### Edge
 
@@ -254,7 +254,7 @@ Markdown 链接相对所在文件解析：去掉锚点，统一使用 `/` 分隔
 | E_REL_TYPE | 关系类型不在元模型中 |
 | E_TYPE_CONSTRAINT | 关系两端的文档类型不符合元模型 |
 | W_NO_META | 受控 Markdown 文件没有 meta |
-| W_SUPERSEDES | 登记表状态与推导出的取代状态不一致：登记为 superseded 但没有被接受的后继，或已有被接受的后继但未登记为 superseded |
+| W_SUPERSEDES | 登记表状态与推导出的取代状态不一致：登记为 superseded 但没有被接受过的后继，或已有被接受过的后继但未登记为 superseded |
 | W_STALE_BASIS | active 节点有非 mention 边指向有效状态为 superseded 或 archived 的节点 |
 | W_CYCLE | depends_on 或 supersedes 出现环 |
 | W_NO_APPROVAL | 登记为 active 但没有 `approval` |
@@ -294,7 +294,7 @@ Markdown 链接相对所在文件解析：去掉锚点，统一使用 `/` 分隔
 
 `tests/fixtures/basic/` 是一个合成仓库，包含一份登记表和约 10 份文档：
 
-- **正常部分**：REQ；构成取代关系的新旧两份 ADR；被另一份 ADR amends 的 ADR；用 meta 声明关系的 SPEC；用正文标记声明关系的 DSN；带 verifies 的 VER。
+- **正常部分**：REQ；构成三代取代链的三份 ADR（中间一代已被取代）；被另一份 ADR amends 的 ADR；用 meta 声明关系的 SPEC；用正文标记声明关系的 DSN；带 verifies 的 VER。
 - **反例**，每个只触发一个 check code：悬空 ID；校验值不符；meta 与登记表类型不符；未知关系类型；关系两端类型不符；active 规范引用已取代的 ADR；登记为 superseded 但后继仍是 draft；指向未登记文件的链接；没有 meta 的受控文件；active 但无 approval；批准后被修改；受管块与登记表不一致。
 - **跨平台**：一份 CRLF 换行的文本文件和一个 LFS 指针文件，校验值与 LF、原始内容的结果相同。
 - **受管块**：同一份文件有无受管块、受管块内容不同，校验值都相同。
