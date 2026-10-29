@@ -20,18 +20,18 @@ artifacts:
     path: docs/requirements.md
     status: draft
     scope: ["project"]
-    sha256: bd7944a9b139ff435ba422a9fffa8f1c9bd5ee599dbb3e996d060b6b5fd1df70
+    sha256: 88c5f1ce4b285c71a398882e54f8e488e5125d81aaf6286e194ee73d2142b109
 
   - id: CRN-DSN-001
     type: design
     path: docs/design/first-slice.md
     status: draft
     scope: ["project"]
-    sha256: d9c0c0a1bbb75b54b177a4aced304d5fc37fee6642b972cb7afd4d5cb6bf9c65
+    sha256: 8f1852679a7448e8b9d5328bcacf4d009320dfa03c82b14c8305003e6d77da4f
 
   - id: CRN-GLO-001
     type: glossary
     path: docs/glossary.md
     status: draft
     scope: ["project"]
-    sha256: 815d1b7712b54a401d4e44772223f56e666469273a7951b68146127c36b50731
+    sha256: a308d924cc6245c64d756d660cbed1dadfcab4097365a079d2de5801c967d78a

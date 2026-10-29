@@ -16,17 +16,44 @@ relations:
 - `show` 展示单个节点的邻域，按关系类型选择展开算法；
 - `check` 报告不一致之处。
 
-本阶段不包含：全文检索、查询语言、推断边、缓存，以及对目标仓库的任何写入。
+三个命令都从项目根出发构建图（见"项目根"）。
+
+本阶段不包含：全文检索、查询语言、推断边、缓存，以及对目标仓库的任何写入。写命令 `init`、`sync` 的语义在"后续阶段"一节定义，本阶段不实现。
 
 ## 属性归属
 
 | 层 | 权威来源 | 属性 |
 |---|---|---|
 | 文件 | 文件 meta、正文标记 | `id`、`type`、`revision`、关系 |
-| 项目 | 资产登记表 | `id`、`type`、`path`、`status`、`scope`、`sha256` |
+| 项目 | 登记关系 `registers`（登记表 → 文档）携带的内容 | `path`、`status`、`scope`、`approval`、`sha256` |
+| 副本 | 文件 meta 中的受管块 `project` | 项目属性的副本，由工具写入，不是权威 |
 | 派生 | cairn 计算 | 有效状态、反向关系、取代链、视图 |
 
-`id` 和 `type` 两层都有：登记表需要它们建立 ID 到路径的映射，文件需要它们说明自己是什么。两者不一致时 `check` 报错。
+项目属性既不属于文档，也不属于登记表，而属于两者之间的登记关系。同一份文档可以被多个登记表登记，各自携带不同的状态和范围。
+
+`id` 和 `type` 在登记表条目和文件 meta 中都出现：登记表需要它们建立 ID 到路径的映射，文件需要它们说明自己是什么。两者不一致时 `check` 报错。
+
+## 项目根
+
+推导从一个根登记表出发：
+
+1. 沿 `registers` 关系确定哪些文档属于本项目，以及它们的项目属性。图的节点集合由此确定。
+2. 文档之间的关系从各文件的 meta 和正文标记中读取。
+3. 有效状态、悬空引用、未登记链接由两者合并推导。
+
+换一个根登记表，就是换一个项目视角：节点范围和项目状态可以不同，文档之间的关系不变。
+
+根由项目根标记 `cairn.yaml` 确定。它是映射配置，同时指向根登记表。查找规则：
+
+- 从当前目录开始向上查找最近的 `cairn.yaml`，找到即停。
+- 一直找到文件系统根仍没有时，报错并退出，提示运行 `cairn init`。
+- 环境变量 `CAIRN_CEILING_DIRS`（路径列表，分隔符同系统 `PATH`）可以限定查找上限，到达其中任一目录后不再向上。
+- `--root DIR` 直接指定根标记所在目录，跳过查找。
+- 子目录可以有自己的 `cairn.yaml` 和登记表，在其中运行得到该子项目的视角。上级登记表以 `registers` 登记子登记表，两个视角由此相连；本阶段只读取单个登记表，不展开子登记表。
+- `cairn.yaml` 中写 `root: true` 时，表示该项目没有父项目，以后展开上级登记表时不再越过它。
+- 所有 JSON 输出带 `root` 字段，值为根标记所在目录，使结果可以复现。登记表和文件中的路径一律相对根标记所在目录。
+
+查找、读取、推导和校验只使用文件系统，不调用 git。
 
 ## 元模型
 
@@ -36,10 +63,17 @@ relations:
 
 `requirement`、`decision`、`design`、`specification`、`verification`、`standard`、`reference`、`glossary`。类型名一律小写，与 embedded-skills 的 artifact-conventions 一致。登记表 `types` 中声明的类型必须在元模型中存在。
 
+另有元类型 `registry`，即资产登记表本身。它与普通文档类型有三点不同：
+
+- 它不登记自己，自身的完整性由 git 历史、评审规则或上级登记表保证；
+- 它是持续维护的文件，不冻结，不适用"较新指向较旧"的方向规则；
+- 它的出边只有 `registers`。
+
 ### 关系类型
 
 | rel | 形状 | 起点类型 | 终点类型 | 终点变化时，源文档应当 | 视图 |
 |---|---|---|---|---|---|
+| registers | arrow | registry | 任意，含 registry | 不适用；携带项目属性 | 默认隐藏 |
 | supersedes | arrow | 任意 | 与起点同类型 | 不适用（终点退出现行） | 链 |
 | amends | arrow | 任意 | 与起点同类型 | 终点仍现行，阅读终点时须叠加本文 | 链 |
 | satisfies | arrow | design、specification、verification | requirement | 复审，并计入需求覆盖 | 覆盖 |
@@ -49,7 +83,7 @@ relations:
 | related | line | 任意 | 任意 | 不传播 | 邻域，默认不展开 |
 | mentions | arrow | 任意 | 任意 | 不传播 | 只计数 |
 
-arrow 的方向一律从较晚写成的文档指向较早的文档，关系由前者声明。line 不区分两端，只需在一端声明。
+除 `registers` 外，arrow 的方向一律从较晚写成的文档指向较早的文档，关系由前者声明。line 不区分两端，只需在一端声明。`registers` 由登记表的条目声明，每个条目就是一条边。
 
 ### 视图
 
@@ -62,16 +96,16 @@ arrow 的方向一律从较晚写成的文档指向较早的文档，关系由�
 | 依赖图 | 沿出边走一层；`--depth N` 可以继续展开，遇到环停止并标出 |
 | 邻域 | 只展开一层 |
 | 只计数 | 默认只显示条数，加 `--all` 时逐条列出 |
+| 默认隐藏 | 不在 `show` 的关系列表中出现，其内容作为节点的项目属性显示在头部 |
 
 ## 输入
 
-- `--root`：目标仓库根目录，默认为当前目录。
-- `--config`：项目映射配置文件。
+- `--root`：项目根标记所在目录，默认按"项目根"一节向上查找。
 
-映射配置示例：
+映射配置 `cairn.yaml` 示例：
 
 ```yaml
-registry: docs/engineering-artifacts.yaml
+registry: docs/engineering-artifacts.yaml       # 根登记表
 id_pattern: '\b(?:XX-[A-Z]+-\d{3}|ADR-\d{4})\b'
 compat:                     # 兼容层，可选
   field_relations:          # 字段名 → 关系类型
@@ -94,10 +128,15 @@ relations:
     - to: ADR-0014
       note: A1、A2 独立升级
   supersedes: [XX-DSN-000]
+project:            # 受管块：由工具写入，手工不要修改
+  status: active
+  approval: "https://github.com/org/repo/pull/123"
 ---
 ```
 
 - `relations` 以关系类型为键。值是 ID 列表；需要携带内容时，列表项写成 `{to, note}`。
+- `project` 是受管块，保存项目属性的副本，让文档离开仓库时仍能看出状态。它由 `sync` 按登记表写入，内容以登记表为准。本阶段只读取它，用于一致性检查。
+- 文件 meta 中不出现由作者手写的状态字段。
 - `revision` 的格式由文档类型决定，cairn 只做字符串比较是否变化，不解释大小。
 - 非 Markdown 文件（PDF、图片等）没有 meta，它们只能作为关系的终点。
 
@@ -117,6 +156,20 @@ relations:
 
 - `title` 取文件中的第一个 H1。
 - `scope` 统一为字符串列表；登记表写成单个字符串时按一项处理。
+
+### 登记条目
+
+登记表的每个条目是一条 `registers` 边，除 `id`、`type` 外携带：`path`、`status`、`scope`、`sha256`，以及可选的 `approval`。
+
+`approval` 记录批准依据：
+
+```yaml
+approval:
+  ref: "https://github.com/org/repo/pull/123"   # 批准记录：PR、评审记录或 gate review
+  sha256: 3f9a…c21e                             # 批准时内容的完整性校验值
+```
+
+`status` 为 `active` 时应当有 `approval`。批准绑定的是内容：当前校验值与 `approval.sha256` 不同，说明文档在批准后被修改过。
 
 ### 有效状态
 
@@ -163,7 +216,11 @@ Markdown 链接相对所在文件解析：去掉锚点，统一使用 `/` 分隔
 |---|---|
 | Git LFS 指针文件 | 取指针中的 `oid sha256:` |
 | LFS 跟踪的文件、含 NUL 字节的文件 | 原始字节 |
-| 其他文本文件 | CRLF、CR 统一为 LF 后计算 |
+| 其他文本文件 | 去掉 frontmatter 中的受管块后，CRLF、CR 统一为 LF 再计算 |
+
+是否被 LFS 跟踪，通过直接解析根标记所在目录及各级子目录中的 `.gitattributes`（`filter=lfs`）判断，不调用 git。
+
+受管块的去除规则：只在文件开头的 frontmatter 内生效；删除顶层键 `project:` 所在行，以及其后所有缩进的续行，直到下一个顶层键或 frontmatter 结束。其余字节保持不变。这样写入或更新受管块不改变校验值，冻结文件的受管块也可以由 `sync` 更新。`registry_check.py` 需要采用同一规则，在此之前，带受管块的文件两边的校验值会不一致。
 
 解析文本时按 UTF-8 解码，换行统一为 LF。路径一律用 `/`，排序按 Unicode 码位，不受系统区域设置影响。
 
@@ -200,6 +257,9 @@ Markdown 链接相对所在文件解析：去掉锚点，统一使用 `/` 分隔
 | W_SUPERSEDES | 登记表状态与推导出的取代状态不一致：登记为 superseded 但没有被接受的后继，或已有被接受的后继但未登记为 superseded |
 | W_STALE_BASIS | active 节点有非 mention 边指向有效状态为 superseded 或 archived 的节点 |
 | W_CYCLE | depends_on 或 supersedes 出现环 |
+| W_NO_APPROVAL | 登记为 active 但没有 `approval` |
+| W_APPROVAL_STALE | 当前校验值与 `approval.sha256` 不同，文档在批准后被修改 |
+| W_MANAGED_DRIFT | 文件受管块与登记表的项目属性不一致 |
 | I_UNRESOLVED_LINK | 链接指向未登记的路径 |
 
 ## 模块
@@ -210,6 +270,7 @@ Markdown 链接相对所在文件解析：去掉锚点，统一使用 `/` 分隔
 |---|---|
 | `model/metamodel.yaml` | 元模型定义 |
 | `metamodel.py` | 读取并校验元模型 |
+| `discover.py` | 查找项目根标记 |
 | `config.py` | 读取并校验映射配置 |
 | `registry.py` | 读取登记表，生成 Node |
 | `meta.py` | 解析 frontmatter 和正文标记 |
@@ -226,7 +287,7 @@ Markdown 链接相对所在文件解析：去掉锚点，统一使用 `/` 分隔
 
 ## 输出确定性
 
-- JSON 的键按字母排序。节点按 `id` 排序，边按 `(src, rel, dst, origin)` 排序。
+- JSON 输出带 `root` 字段，键按字母排序。节点按 `id` 排序，边按 `(src, rel, dst, origin)` 排序。
 - 输出中的路径一律使用 `/`，换行一律使用 `\n`，编码为 UTF-8。
 
 ## 测试样例
@@ -234,8 +295,10 @@ Markdown 链接相对所在文件解析：去掉锚点，统一使用 `/` 分隔
 `tests/fixtures/basic/` 是一个合成仓库，包含一份登记表和约 10 份文档：
 
 - **正常部分**：REQ；构成取代关系的新旧两份 ADR；被另一份 ADR amends 的 ADR；用 meta 声明关系的 SPEC；用正文标记声明关系的 DSN；带 verifies 的 VER。
-- **反例**，每个只触发一个 check code：悬空 ID；校验值不符；meta 与登记表类型不符；未知关系类型；关系两端类型不符；active 规范引用已取代的 ADR；登记为 superseded 但后继仍是 draft；指向未登记文件的链接；没有 meta 的受控文件。
+- **反例**，每个只触发一个 check code：悬空 ID；校验值不符；meta 与登记表类型不符；未知关系类型；关系两端类型不符；active 规范引用已取代的 ADR；登记为 superseded 但后继仍是 draft；指向未登记文件的链接；没有 meta 的受控文件；active 但无 approval；批准后被修改；受管块与登记表不一致。
 - **跨平台**：一份 CRLF 换行的文本文件和一个 LFS 指针文件，校验值与 LF、原始内容的结果相同。
+- **受管块**：同一份文件有无受管块、受管块内容不同，校验值都相同。
+- **根查找**：在 fixture 的子目录中运行，找到上级的 `cairn.yaml`；设置 `CAIRN_CEILING_DIRS` 后，在上限以内没有 `cairn.yaml` 的目录中运行，报错退出。
 
 `tests/fixtures/compat/` 用字段行和登记表 `supersedes` 声明关系，验证兼容层。`E_DUP_ID` 放在单独的 fixture 中测试。
 
@@ -245,8 +308,23 @@ Markdown 链接相对所在文件解析：去掉锚点，统一使用 `/` 分隔
 2. 在 cairn 仓库自身上运行 `cairn show CRN-DSN-001`，显示一条指向 CRN-REQ-001 的 satisfies 边，basis 为 declared；运行 `cairn check` 没有发现。
 3. 在一个真实的文控仓库上，借助兼容层，`show` 能还原一张事先手工整理的关系表，并正确标出每条边的 basis；`check` 报告的每条发现，要么能解释原因，要么据此修正映射配置。
 
+## 后续阶段
+
+以下两个写命令只在本设计中定义语义，不在本阶段实现。除此之外，cairn 的所有命令都是只读的。
+
+### `cairn init`
+
+在当前目录创建 `cairn.yaml` 和一份空的根登记表，`types` 取自元模型。目标文件已存在时拒绝执行。只新建文件，不修改已有的受控资产。
+
+### `cairn sync [ID...]`
+
+按登记表把项目属性写入各文件的受管块。只改受管块，不改其他内容；由于校验值不包含受管块，写入后 `sha256` 不变。冻结文件的受管块同样更新，例如旧文档被取代后写入 `superseded`。
+
 ## 待确认
 
 - 兼容层是否需要读取 ADR 的 Nygard 行首声明（`Supersedes [..](..)`、`Amends [..](..)`），还是由目标仓库逐步改为 meta。
 - 字段值中混有追溯性引用时（例如"与其他文档的关系"），由哪些字段进入 `compat.field_relations`。
 - 关系携带的内容除 `note` 外是否需要结构化字段，例如所依据的章节。
+- 受管块记录哪些项目属性：只记 `status`，还是同时记 `scope` 和 `approval`。
+- 文档被多个登记表登记时，受管块记录哪个项目的属性。
+- `registry_check.py` 迁入 cairn，还是保留在 embedded-skills 中并同步采用受管块去除规则。
