@@ -83,16 +83,16 @@ revision: 3
 ## 关系语义
 
 **元模型**（metamodel）
-：cairn 自带的受控定义，规定文档类型和关系类型。项目可以追加类型，不能改写已有类型的语义。
+：cairn 自带的受控定义，规定文档类型和关系类型，唯一来源是 `docs/model/`：每种类型一份类型描述（doctype），每种关系一份关系描述（reltype）。项目可以追加类型，不能改写已有类型的语义。
 
 **关系类型**（rel）
-：边的语义，例如 supersedes、amends、satisfies、governed_by、depends_on、verifies、related、mentions。每种关系类型由它的形状、两端允许的文档类型、失效语义和视图定义。
+：边的语义，例如 registers、includes、supersedes、amends、satisfies、governed_by、depends_on、verifies、related、mentions。每种关系类型由它的形状、两端允许的文档类型、失效语义和视图定义。
 
 **形状**
 ：关系有向（arrow）还是无向（line）。arrow 从较晚写成的文档指向较早的文档；line 不区分两端。
 
 **视图**（view）
-：沿某种关系展开和展示的算法，例如链、覆盖、依赖图、邻域。视图由关系类型决定，不同关系可以使用不同视图。
+：沿某种关系展开和展示的算法：chain（链）、coverage（覆盖）、dag（依赖图）、neighbors（邻域）、count（只计数）、hidden（默认隐藏）。视图由关系类型决定，不同关系可以使用不同视图。
 
 **失效语义**
 ：终点发生变化（被取代、修订前进）时，指向它的源文档需要做什么，例如复审、标记为过时、重做验证。`check` 据此判断哪些文档受到变更影响。

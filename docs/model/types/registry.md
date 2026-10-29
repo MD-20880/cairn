@@ -1,0 +1,25 @@
+---
+id: CRN-TYP-009
+type: doctype
+revision: 1
+name: registry
+meta: true
+purpose: '资产登记表本身。根登记表 `cairn.yaml` 和被包含的登记表都属于此类型。'
+---
+
+# registry：登记表
+
+资产登记表本身。根登记表 `cairn.yaml` 和被包含的登记表都属于此类型。
+
+## 写法
+
+登记表记录文档在项目中的属性：路径、状态、适用范围、批准依据、完整性校验值。它不登记自己，是持续维护的文件，不冻结，不适用"较新指向较旧"的方向规则。
+
+## 关系
+
+只能作为 `registers` 和 `includes` 的起点，也只有它能发出这两种关系。只能作为 `includes` 的终点。
+
+## 例子
+
+- 属于：`cairn.yaml`、已有仓库的 `docs/engineering-artifacts.yaml`。
+- 不属于：普通的文档索引页（不纳管，或作为 glossary/design）。

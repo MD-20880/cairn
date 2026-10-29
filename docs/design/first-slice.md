@@ -66,49 +66,25 @@ relations:
 
 ## 元模型
 
-元模型是 cairn 自带的受控定义，放在 `cairn/model/metamodel.yaml`，规定文档类型和关系类型。项目可以在映射配置中追加类型，不能改写已有类型的语义。
+元模型的唯一来源是 [`docs/model/`](../model/README.md)：`types/` 中每个文件定义一种文档类型，`relations/` 中每个文件定义一种关系类型。文件的 frontmatter 是机器可读的定义，正文是语义说明。cairn 发布时把这两个目录打包进去，运行时从中读取，不另行维护副本。项目可以在自己的仓库中追加类型或关系，不能改写已有定义的语义。
 
-### 文档类型
+- 文档类型：requirement、decision、design、specification、verification、standard、reference、glossary；元类型 registry、doctype、reltype。类型名一律小写，与 embedded-skills 的 artifact-conventions 一致。登记表 `types` 中声明的类型必须在元模型中存在。
+- 关系类型：registers、includes、supersedes、amends、satisfies、governed_by、depends_on、verifies、related、mentions。
 
-`requirement`、`decision`、`design`、`specification`、`verification`、`standard`、`reference`、`glossary`。类型名一律小写，与 embedded-skills 的 artifact-conventions 一致。登记表 `types` 中声明的类型必须在元模型中存在。
-
-另有元类型 `registry`，即资产登记表本身。它与普通文档类型有三点不同：
-
-- 它不登记自己，自身的完整性由 git 历史、评审规则或包含它的登记表保证；
-- 它是持续维护的文件，不冻结，不适用"较新指向较旧"的方向规则；
-- 它的出边只有 `registers` 和 `includes`，这两种关系也只能从它出发。
-
-`cairn.yaml` 和被包含的登记表都是 `registry`。
-
-### 关系类型
-
-| rel | 形状 | 起点类型 | 终点类型 | 终点变化时，源文档应当 | 视图 |
-|---|---|---|---|---|---|
-| registers | arrow | registry | 除 registry 外的任意类型 | 不适用；携带项目属性 | 默认隐藏 |
-| includes | arrow | registry | registry | 不适用；被包含登记表的节点并入本项目 | 默认隐藏 |
-| supersedes | arrow | 任意 | 与起点同类型 | 不适用（终点退出现行） | 链 |
-| amends | arrow | 任意 | 与起点同类型 | 终点仍现行，阅读终点时须叠加本文 | 链 |
-| satisfies | arrow | design、specification、verification | requirement | 复审，并计入需求覆盖 | 覆盖 |
-| governed_by | arrow | 任意 | decision、standard | 指向 decision 时，决策被取代则源文档过时；指向 standard 时，按规则复核合规 | 邻域 |
-| depends_on | arrow | 任意 | specification、design | 终点修订前进时，确认兼容 | 依赖图 |
-| verifies | arrow | verification | 任意 | 终点修订前进时，验证需要重做 | 覆盖 |
-| related | line | 任意 | 任意 | 不传播 | 邻域，默认不展开 |
-| mentions | arrow | 任意 | 任意 | 不传播 | 只计数 |
-
-除 `registers`、`includes` 外，arrow 的方向一律从较晚写成的文档指向较早的文档，关系由前者声明。line 不区分两端，只需在一端声明。`registers` 由登记表的 `artifacts` 条目声明，每个条目是一条边；`includes` 由登记表的 `include` 列表声明。
+`cairn.yaml` 和被包含的登记表都属于元类型 registry。
 
 ### 视图
 
-视图决定 `show` 怎样沿一种关系展开：
+关系描述中的 `view` 决定 `show` 怎样沿该关系展开：
 
-| 视图 | 算法 |
+| view | 算法 |
 |---|---|
-| 链 | 沿关系双向走到底，按链上顺序输出 |
-| 覆盖 | 从终点看，列出所有声明了该关系的源文档；没有源文档时标为"未建立追溯" |
-| 依赖图 | 沿出边走一层；`--depth N` 可以继续展开，遇到环停止并标出 |
-| 邻域 | 只展开一层 |
-| 只计数 | 默认只显示条数，加 `--all` 时逐条列出 |
-| 默认隐藏 | 不在 `show` 的关系列表中出现，其内容作为节点的项目属性显示在头部 |
+| chain | 沿关系双向走到底，按链上顺序输出 |
+| coverage | 从终点看，列出所有声明了该关系的源文档；没有源文档时标为"未建立追溯" |
+| dag | 沿出边走一层；`--depth N` 可以继续展开，遇到环停止并标出 |
+| neighbors | 只展开一层；`related` 默认不展开，加 `--all` 时显示 |
+| count | 默认只显示条数，加 `--all` 时逐条列出 |
+| hidden | 不在 `show` 的关系列表中出现，其内容作为节点的项目属性显示在头部 |
 
 ## 输入
 
@@ -283,8 +259,7 @@ Markdown 链接相对所在文件解析：去掉锚点，统一使用 `/` 分隔
 
 | 模块 | 职责 |
 |---|---|
-| `model/metamodel.yaml` | 元模型定义 |
-| `metamodel.py` | 读取并校验元模型 |
+| `metamodel.py` | 从 `docs/model/` 读取并校验元模型 |
 | `discover.py` | 查找项目根标记 |
 | `config.py` | 读取并校验映射配置 |
 | `registry.py` | 读取登记表，生成 Node |
