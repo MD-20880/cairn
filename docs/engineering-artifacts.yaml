@@ -27,7 +27,7 @@ artifacts:
     path: docs/design/first-slice.md
     status: draft
     scope: ["project"]
-    sha256: 298593f8d0408be430f1ddf52110071f09d30529ece34f43ecdacb414a27e48a
+    sha256: 63f7970855fd7b63c9891b14cae79fdb87ab076ff90d66941e518c9dd97c6ad0
 
   - id: CRN-GLO-001
     type: glossary
