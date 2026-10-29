@@ -45,22 +45,23 @@ relations:
 
 换一个根登记表，就是换一个项目视角：节点范围和项目状态可以不同，文档之间的关系不变。
 
-根登记表就是 `cairn.yaml`。它是一份完整的登记表，可以自己登记所有文档，也可以包含其他登记表，同时承载读取配置。查找规则：
+根登记表是一个文件，默认名为 `cairn.yaml`。它是一份完整的登记表，可以自己登记所有文档，也可以包含其他登记表文件，同时承载读取配置。查找规则：
 
-- 从当前目录开始向上查找最近的 `cairn.yaml`，找到即停。
+- 从当前目录开始向上查找最近的根登记表文件，找到即停。查找的文件名默认是 `cairn.yaml`，可以用 `--file NAME` 或环境变量 `CAIRN_FILE` 改为其他名字。
 - 一直找到文件系统根仍没有时，报错并退出，提示运行 `cairn init`。
 - 环境变量 `CAIRN_CEILING_DIRS`（路径列表，分隔符同系统 `PATH`）可以限定查找上限，到达其中任一目录后不再向上。
-- 最近的 `cairn.yaml` 就是根。子目录可以有自己的 `cairn.yaml`，在其中运行得到该子项目的视角；上级的 `cairn.yaml` 可以 `include` 它，两个视角由此相连。
-- `--root DIR` 直接指定 `cairn.yaml` 所在目录，跳过查找。
-- 所有 JSON 输出带 `root` 字段，值为 `cairn.yaml` 所在目录，使结果可以复现。
+- 最近的那个文件就是根。子目录可以有自己的根登记表，在其中运行得到该子项目的视角；上级登记表可以 `include` 它，两个视角由此相连。
+- `--root PATH` 直接指定根登记表文件，跳过查找。
+- 所有 JSON 输出带 `root` 字段，值为根登记表文件的路径，使结果可以复现。
 
 ### 包含规则
 
-1. **路径**：每份登记表中的路径，相对该登记表自己所在的目录解析。被包含的登记表单独使用时结果不变。
-2. **范围**：`include` 的目标必须位于根目录之内，不跨出根目录。
-3. **冲突**：同一份文档被多份登记表登记时，取 include 链上离根最近的那一份。距离相同且项目属性不同时报错。include 成环时报错。
-4. **配置**：`id_pattern`、`compat` 等读取配置只从根 `cairn.yaml` 读取，被包含登记表中的配置忽略。
-5. 被包含的登记表可以是任何符合 artifact-conventions 格式的登记表，例如已有仓库的 `docs/engineering-artifacts.yaml`。已有仓库只需在根目录新建一个包含它的 `cairn.yaml`，原登记表不用修改。
+1. **落到文件**：`include` 的每一项是一个文件路径，不是文档 ID。登记表以文件路径作为身份，不需要也不分配 ID，也不出现在任何 `artifacts` 条目中。文件名不限，例如 `docs/engineering-artifacts.yaml`、`components/boardcom/registry.yaml`。目标文件不是合法的登记表时报错。
+2. **路径**：每份登记表中的路径，相对该登记表文件所在的目录解析。被包含的登记表单独使用时结果不变。
+3. **范围**：`include` 的目标必须位于根目录之内，不跨出根目录。
+4. **冲突**：同一份文档被多份登记表登记时，取 include 链上离根最近的那一份。距离相同且项目属性不同时报错。include 成环时报错。
+5. **配置**：`id_pattern`、`compat` 等读取配置只从根登记表读取，被包含登记表中的配置忽略。
+6. 被包含的登记表可以是任何符合 artifact-conventions 格式的登记表。已有仓库只需在根目录新建一个包含原登记表文件的 `cairn.yaml`，原登记表不用修改。
 
 查找、读取、推导和校验只使用文件系统，不调用 git。
 
@@ -71,7 +72,7 @@ relations:
 - 文档类型：requirement、decision、design、specification、verification、standard、reference、glossary；元类型 registry、doctype、reltype。类型名一律小写，与 embedded-skills 的 artifact-conventions 一致。登记表 `types` 中声明的类型必须在元模型中存在。
 - 关系类型：registers、includes、supersedes、amends、satisfies、governed_by、depends_on、verifies、related、mentions。
 
-`cairn.yaml` 和被包含的登记表都属于元类型 registry。
+根登记表和被包含的登记表文件都属于元类型 registry。registry 节点以文件路径为身份，没有文档 ID。
 
 ### 视图
 
@@ -88,7 +89,8 @@ relations:
 
 ## 输入
 
-- `--root`：`cairn.yaml` 所在目录，默认按"项目根"一节向上查找。
+- `--root PATH`：根登记表文件，默认按"项目根"一节向上查找。
+- `--file NAME`：向上查找时使用的文件名，默认 `cairn.yaml`。
 
 `cairn.yaml` 示例：
 
@@ -100,9 +102,9 @@ compat:                                           # 兼容层，可选
   field_relations:                                # 字段名 → 关系类型
     需求依据: satisfies
     决策依据: governed_by
-include:                                          # includes 关系
+include:                                          # includes 关系：文件路径，文件名不限
   - docs/engineering-artifacts.yaml
-  - components/boardcom/cairn.yaml
+  - components/boardcom/registry.yaml
 types:
   design:
     purpose: "设计方案"
@@ -288,8 +290,8 @@ Markdown 链接相对所在文件解析：去掉锚点，统一使用 `/` 分隔
 - 一条指向未登记 ID 的关系、一个未知关系类型，验证 `show` 不中断。
 - 一份 CRLF 换行的文件，验证解析结果与 LF 相同。
 - **find**：同一个词分别出现在 ID、标题和正文中，验证分档和排序；中英文混合的词。
-- **包含**：根 `cairn.yaml` 包含一份子登记表，验证路径相对子登记表解析、离根近者优先、同距冲突报错、include 成环报错、跨出根目录报错。
-- **根查找**：在 fixture 的子目录中运行，找到上级的 `cairn.yaml`；设置 `CAIRN_CEILING_DIRS` 后，在上限以内没有 `cairn.yaml` 的目录中运行，报错退出。
+- **包含**：根登记表包含一份不叫 `cairn.yaml` 的子登记表文件，验证路径相对子登记表解析、离根近者优先、同距冲突报错、include 成环报错、跨出根目录报错。
+- **根查找**：在 fixture 的子目录中运行，找到上级的 `cairn.yaml`；用 `--file` 指定其他文件名时找到对应文件；设置 `CAIRN_CEILING_DIRS` 后，在上限以内没有 `cairn.yaml` 的目录中运行，报错退出。
 
 `tests/fixtures/compat/` 用字段行和登记表 `supersedes` 声明关系，验证兼容层。
 
