@@ -1,7 +1,195 @@
-# cairn 自身仓库的映射配置
-registry: docs/engineering-artifacts.yaml
-id_pattern: '\bCRN-[A-Z]+-\d{3}\b'
-field_relations:
-  需求依据: satisfies
-  决策依据: governed_by
-  依赖: depends_on
+# cairn 自身的根登记表（项目根标记）
+#
+# 记录文档在本项目中的属性：路径、状态、适用范围、完整性校验值。
+# 文档自身的属性（ID、类型、修订、关系）写在文件 meta 中，id 和 type 两边须一致。
+# 登记不等于批准。status 取值：draft / active / superseded / archived
+# sha256：文本文件先去掉受管块，再把 CRLF、CR 统一为 LF 后计算。修改受控文件后同步更新。
+schema_version: 1
+coverage: full
+integrity: sha256
+types:
+  requirement:
+    purpose: "cairn 的需求"
+  design:
+    purpose: "cairn 的设计方案"
+  glossary:
+    purpose: "cairn 的术语定义"
+  doctype:
+    purpose: "元模型中的文档类型描述"
+  reltype:
+    purpose: "元模型中的关系类型描述"
+artifacts:
+  - id: CRN-REQUIREMENTS
+    type: requirement
+    path: docs/requirements.md
+    status: draft
+    scope: ["project"]
+    sha256: a13df6b081293d285b15ceaf9e67ef6d86f1fd4374990e754d01bf6a44a04bee
+
+  - id: CRN-DESIGN-RETRIEVAL
+    type: design
+    path: docs/design/retrieval.md
+    status: draft
+    scope: ["project"]
+    sha256: 4718f8fa71e0efe1e232d8e0889d52379f4ee8891ea532694cc706eadb7fc8ff
+
+  - id: CRN-DESIGN-METAMODEL
+    type: design
+    path: docs/design/metamodel.md
+    status: draft
+    scope: ["project"]
+    sha256: 03ac0bf3053fda3fc62029c5f7e9cfe8109113ec421507665fa87e2a9e0159f0
+
+  - id: CRN-GLOSSARY
+    type: glossary
+    path: docs/glossary.md
+    status: draft
+    scope: ["project"]
+    sha256: f224e6d99f5ac2d0fb764c7d17aec63796dc755d49df89f19ef62802bc698207
+
+  - id: CRN-REL-REGISTERS
+    type: reltype
+    path: docs/model/relations/registers.md
+    status: draft
+    scope: ["project"]
+    sha256: eb5cd16dc182dd7922d9b36ca60dc3ae3be6156ad531f9daa34c226c0f1cc878
+
+  - id: CRN-REL-INCLUDES
+    type: reltype
+    path: docs/model/relations/includes.md
+    status: draft
+    scope: ["project"]
+    sha256: 1a0a9ee6ea6c3bff498226d000a7db062f97cd02c142b5e2e11accbbc993119c
+
+  - id: CRN-REL-SUPERSEDES
+    type: reltype
+    path: docs/model/relations/supersedes.md
+    status: draft
+    scope: ["project"]
+    sha256: 239f1eafd189969d4b1bd5414f32926245abc18cfa55f891aabf1fcb7367da20
+
+  - id: CRN-REL-AMENDS
+    type: reltype
+    path: docs/model/relations/amends.md
+    status: draft
+    scope: ["project"]
+    sha256: 2e55bde6ebaf1aa25ea6a8330d59e1b366c527cb536b65f2b1ea13746e81acc0
+
+  - id: CRN-REL-SATISFIES
+    type: reltype
+    path: docs/model/relations/satisfies.md
+    status: draft
+    scope: ["project"]
+    sha256: c771a29be4cb7221ac1f7cb6311c8d0dd64f2a98b57b12a004c7fe57756f735f
+
+  - id: CRN-REL-GOVERNED_BY
+    type: reltype
+    path: docs/model/relations/governed_by.md
+    status: draft
+    scope: ["project"]
+    sha256: daa29286443cc4736864b4b141d65adfd5b62bd748a69803ecc9c73ab7b5d238
+
+  - id: CRN-REL-DEPENDS_ON
+    type: reltype
+    path: docs/model/relations/depends_on.md
+    status: draft
+    scope: ["project"]
+    sha256: e9ed8ac8546cfeb125e57baf36a476fb55dfb17fec39dd8d66aec671b8de21f5
+
+  - id: CRN-REL-VERIFIES
+    type: reltype
+    path: docs/model/relations/verifies.md
+    status: draft
+    scope: ["project"]
+    sha256: 78d947112fcef28d85f4f047a944e2f3dd782d7e271e82b39c36029d98f1839e
+
+  - id: CRN-REL-RELATED
+    type: reltype
+    path: docs/model/relations/related.md
+    status: draft
+    scope: ["project"]
+    sha256: 77fd09f1e14a7840be81c26eb1d30f351e088ad803bd6bfb523900e7970e045d
+
+  - id: CRN-REL-MENTIONS
+    type: reltype
+    path: docs/model/relations/mentions.md
+    status: draft
+    scope: ["project"]
+    sha256: 3ecb1c43ea3e6c054a147f63b9952ef87c9431f7fc59176d906feb27d62bcad6
+
+  - id: CRN-TYPE-REQUIREMENT
+    type: doctype
+    path: docs/model/types/requirement.md
+    status: draft
+    scope: ["project"]
+    sha256: b1616f6fd6615de76c17066d0eba72d558729899a7deb438c497e5cfde6313b1
+
+  - id: CRN-TYPE-DECISION
+    type: doctype
+    path: docs/model/types/decision.md
+    status: draft
+    scope: ["project"]
+    sha256: a1f42ed35c68f048697a833a8ebe445bd8f891ac3a61e8645fed0820e2e4c8ea
+
+  - id: CRN-TYPE-DESIGN
+    type: doctype
+    path: docs/model/types/design.md
+    status: draft
+    scope: ["project"]
+    sha256: 8d8cb7401649c9f7540b7e0739e585f1f90fec2517d6838af90bb56cae29cfe9
+
+  - id: CRN-TYPE-SPECIFICATION
+    type: doctype
+    path: docs/model/types/specification.md
+    status: draft
+    scope: ["project"]
+    sha256: f7219ddd83af4034c72d01be0ebeceb1dc8d92f243afeb69945b94b36567355f
+
+  - id: CRN-TYPE-VERIFICATION
+    type: doctype
+    path: docs/model/types/verification.md
+    status: draft
+    scope: ["project"]
+    sha256: 8f71e9698e69c50b433996fa46e4ed5b8ef8803d52decb86b89a172b6c41276f
+
+  - id: CRN-TYPE-STANDARD
+    type: doctype
+    path: docs/model/types/standard.md
+    status: draft
+    scope: ["project"]
+    sha256: 1c44af16678e9e055d161b88e4f62bcdc4f1b0fb4afa99edb5c68e4b70aee1d1
+
+  - id: CRN-TYPE-REFERENCE
+    type: doctype
+    path: docs/model/types/reference.md
+    status: draft
+    scope: ["project"]
+    sha256: f3d22cb20e42ab1ff839456db9e8ed6b1a93a4f646c9641ed382e0aa000be3b6
+
+  - id: CRN-TYPE-GLOSSARY
+    type: doctype
+    path: docs/model/types/glossary.md
+    status: draft
+    scope: ["project"]
+    sha256: 9aedc93c0e7739fa3c9327e91eb77ebb2b9cf067ff5ceb2f8798d60346737d08
+
+  - id: CRN-TYPE-REGISTRY
+    type: doctype
+    path: docs/model/types/registry.md
+    status: draft
+    scope: ["project"]
+    sha256: f425d9a95bcd724851b2ee374e862de6fedab75348561a72cca392dd77b79a6c
+
+  - id: CRN-TYPE-DOCTYPE
+    type: doctype
+    path: docs/model/types/doctype.md
+    status: draft
+    scope: ["project"]
+    sha256: cc9cbcbd40ac188f3c8f239caa3c5c533cbdb31d6b0833fba426676cd255a463
+
+  - id: CRN-TYPE-RELTYPE
+    type: doctype
+    path: docs/model/types/reltype.md
+    status: draft
+    scope: ["project"]
+    sha256: 851886c3e8275ca2113419997fc083aaae7c69daee6ed4014efa22ebf41a678d
