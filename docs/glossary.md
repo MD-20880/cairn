@@ -2,7 +2,7 @@
 id: CRN-GLOSSARY
 type: glossary
 title: 'cairn 词汇表'
-revision: 4
+revision: 5
 ---
 
 # cairn 词汇表
@@ -90,7 +90,7 @@ revision: 4
 ：边的语义，例如 registers、includes、supersedes、amends、satisfies、governed_by、depends_on、verifies、related、mentions。每种关系类型由它的形状、两端允许的文档类型、失效语义和视图定义。
 
 **形状**
-：关系有向（arrow）还是无向（line）。arrow 从较晚写成的文档指向较早的文档；line 不区分两端。
+：关系有向（arrow）还是无向（line）。arrow 从主动方指向被动方，由主动方声明；line 不区分两端，由任一方声明一次即可。
 
 **视图**（view）
 ：沿某种关系展开和展示的算法：chain（链）、coverage（覆盖）、dag（依赖图）、neighbors（邻域）、count（只计数）、hidden（默认隐藏）。视图由关系类型决定，不同关系可以使用不同视图。

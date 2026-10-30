@@ -24,7 +24,7 @@ artifacts:
     path: docs/requirements.md
     status: draft
     scope: ["project"]
-    sha256: afafc3eadc5f9633375ddc1d0e6c5b4c55bbb7a1821918f1f42992eba151e5e0
+    sha256: a13df6b081293d285b15ceaf9e67ef6d86f1fd4374990e754d01bf6a44a04bee
 
   - id: CRN-DESIGN-RETRIEVAL
     type: design
@@ -38,14 +38,14 @@ artifacts:
     path: docs/design/metamodel.md
     status: draft
     scope: ["project"]
-    sha256: c27e64fac64969344f25f3923a70835bef600cbdc15f092fc305457f8171392a
+    sha256: 03ac0bf3053fda3fc62029c5f7e9cfe8109113ec421507665fa87e2a9e0159f0
 
   - id: CRN-GLOSSARY
     type: glossary
     path: docs/glossary.md
     status: draft
     scope: ["project"]
-    sha256: 02490e13083db490fb2b3271a958da8fd3f909519622557f02e994cf58b721e6
+    sha256: f224e6d99f5ac2d0fb764c7d17aec63796dc755d49df89f19ef62802bc698207
 
   - id: CRN-REL-REGISTERS
     type: reltype
